@@ -5,7 +5,7 @@ on:
     types: [published] # Scatta appena viene pubblicata una nuova Release su GitHub
 
 jobs:
-  build-pdf:
+  build-pdf: 
     runs-on: ubuntu-latest
     permissions:
       contents: write # Permesso necessario per allegare il file alla release

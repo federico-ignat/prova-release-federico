@@ -170,6 +170,41 @@ jobs:
           story.append(t_validazione)
           story.append(Spacer(1, 15))
 
+          story.append(Paragraph("5. Validazione per il rilascio", heading_style))
+
+          data_rilascio = [
+              ["Versione", tag],
+              ["Pubblicato da", author],
+              ["Repository", repo]
+          ]
+
+          t_rilascio = Table(data_rilascio, colWidths=[200, 300])
+
+          t_rilascio.setStyle(TableStyle([
+              ('GRID', (0,0), (-1,-1), 1, colors.black),
+              ('BACKGROUND', (0,0), (0,-1), colors.lightgrey),
+          ]))
+
+          story.append(t_rilascio)
+          story.append(Spacer(1, 15))
+
+          story.append(Paragraph("6. Rilascio in produzione", heading_style))
+
+          data_azioni = [
+              ["Descrizione", "Stato"],
+              ["Nessuna azione correttiva registrata", "OK"]
+          ]
+
+          t_azioni = Table(data_azioni, colWidths=[350, 150])
+
+          t_azioni.setStyle(TableStyle([
+              ('GRID', (0,0), (-1,-1), 1, colors.black),
+              ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+          ]))
+
+          story.append(t_azioni)
+          story.append(Spacer(1, 15))
+
           # Tabella Metadati
           data_meta = [
               [Paragraph("<b>Repository:</b>", body_style), Paragraph(repo, body_style)],

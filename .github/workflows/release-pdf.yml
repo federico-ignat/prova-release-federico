@@ -82,6 +82,25 @@ jobs:
           story.append(Paragraph("<b>Controllo di Riferimento:</b> A.8.32 Change Management & A.8.25 Secure SDLC", body_style))
           story.append(Spacer(1, 10))
 
+                    story.append(Paragraph("INFORMAZIONI PROGETTO", heading_style))
+
+          data_progetto = [
+              ["Titolo Progetto", name],
+              ["Sviluppatore Assegnato", author],
+              ["Repository", repo],
+              ["Versione", tag],
+          ]
+
+          t_progetto = Table(data_progetto, colWidths=[180, 320])
+
+          t_progetto.setStyle(TableStyle([
+              ('GRID', (0,0), (-1,-1), 1, colors.black),
+              ('BACKGROUND', (0,0), (0,-1), colors.lightgrey),
+          ]))
+
+          story.append(t_progetto)
+          story.append(Spacer(1, 15))
+
           # Tabella Metadati
           data_meta = [
               [Paragraph("<b>Repository:</b>", body_style), Paragraph(repo, body_style)],

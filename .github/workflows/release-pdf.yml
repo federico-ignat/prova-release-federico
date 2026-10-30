@@ -135,6 +135,41 @@ jobs:
           story.append(t_sviluppo)
           story.append(Spacer(1, 15))
 
+          story.append(Paragraph("3. Test autonomi dello sviluppatore", heading_style))
+
+          data_test = [
+              ["Tipo Test", "Esito", "Note"],
+              ["Test Funzionali", "OK", "Eseguiti con successo"]
+          ]
+
+          t_test = Table(data_test, colWidths=[180, 120, 200])
+
+          t_test.setStyle(TableStyle([
+              ('GRID', (0,0), (-1,-1), 1, colors.black),
+              ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+          ]))
+
+          story.append(t_test)
+          story.append(Spacer(1, 15))
+
+          story.append(Paragraph("4. Test affiancamento con ICT Manager", heading_style))
+
+          data_validazione = [
+              ["Controllo", "Esito"],
+              ["Code Review", "OK"],
+              ["Deployment Approval", "OK"]
+          ]
+
+          t_validazione = Table(data_validazione, colWidths=[250, 250])
+
+          t_validazione.setStyle(TableStyle([
+              ('GRID', (0,0), (-1,-1), 1, colors.black),
+              ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+          ]))
+
+          story.append(t_validazione)
+          story.append(Spacer(1, 15))
+
           # Tabella Metadati
           data_meta = [
               [Paragraph("<b>Repository:</b>", body_style), Paragraph(repo, body_style)],

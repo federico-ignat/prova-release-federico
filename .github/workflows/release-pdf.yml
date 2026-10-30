@@ -82,7 +82,7 @@ jobs:
           story.append(Paragraph("<b>Controllo di Riferimento:</b> A.8.32 Change Management & A.8.25 Secure SDLC", body_style))
           story.append(Spacer(1, 10))
           
-           story.append(Paragraph("INFORMAZIONI PROGETTO", heading_style))
+          story.append(Paragraph("INFORMAZIONI PROGETTO", heading_style))
 
           data_progetto = [
               ["Titolo Progetto", name],

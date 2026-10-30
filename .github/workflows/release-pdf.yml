@@ -65,7 +65,7 @@ jobs:
           heading_style = ParagraphStyle(
               'HeadingStyle',
               parent=styles['Heading2'],
-              fontSize=12,
+              fontSize=10,
               textColor=colors.HexColor('#4b5563'),
               spaceAfter=6
           )
@@ -202,6 +202,7 @@ jobs:
           ]))
 
           story.append(t_azioni)
+          story.append(Spacer(1,5))
           
           doc.build(story)
           print("PDF generato con successo.")

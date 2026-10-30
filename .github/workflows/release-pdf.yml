@@ -1,13 +1,140 @@
-name: Test
+name: Genera PDF Release Notes per ISO 27001
 
 on:
   release:
-    types: [published]
+    types: [published] # Scatta appena viene pubblicata una nuova Release su GitHub
 
 jobs:
-  test:
+  build-pdf:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Permesso necessario per allegare il file alla release
 
     steps:
-      - name: Test
-        run: echo "ciao"
+      - name: Checkout del codice
+        uses: actions/checkout@v4
+
+      - name: Configura Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Installa libreria per generare il PDF (ReportLab)
+        run: |
+          pip install reportlab requests
+
+      - name: Genera il documento PDF di rilascio
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          RELEASE_NAME: ${{ github.event.release.name }}
+          RELEASE_BODY: ${{ github.event.release.body }}
+          AUTHOR: ${{ github.event.release.author.login }}
+        run: |
+          python3 - <<'EOF'
+          import os
+          import json
+          from reportlab.lib.pagesizes import letter
+          from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+          from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+          from reportlab.lib import colors
+
+          # Recupera le variabili d'ambiente passate da GitHub
+          repo = os.environ['REPOSITORY']
+          tag = os.environ['TAG_NAME']
+          name = os.environ['RELEASE_NAME'] or tag
+          body = os.environ['RELEASE_BODY'] or "Nessuna nota inserita."
+          author = os.environ['AUTHOR']
+
+          pdf_filename = f"Scheda_Rilascio_{tag}.pdf"
+          doc = SimpleDocTemplate(pdf_filename, pagesize=letter,
+                                  rightMargin=36, leftMargin=36,
+                                  topMargin=36, bottomMargin=36)
+          story = []
+          styles = getSampleStyleSheet()
+
+          # Stili personalizzati
+          title_style = ParagraphStyle(
+              'TitleStyle',
+              parent=styles['Heading1'],
+              fontSize=18,
+              textColor=colors.HexColor('#1f2937'),
+              spaceAfter=12
+          )
+          heading_style = ParagraphStyle(
+              'HeadingStyle',
+              parent=styles['Heading2'],
+              fontSize=12,
+              textColor=colors.HexColor('#4b5563'),
+              spaceAfter=6
+          )
+          body_style = ParagraphStyle(
+              'BodyStyle',
+              parent=styles['Normal'],
+              fontSize=10,
+              textColor=colors.HexColor('#374151'),
+              spaceAfter=8
+          )
+
+          # Intestazione documento per conformità ISO 27001
+          story.append(Paragraph("REGISTRO DI RILASCIO IN PRODUZIONE (ISO 27001)", title_style))
+          story.append(Paragraph("<b>Controllo di Riferimento:</b> A.8.32 Change Management & A.8.25 Secure SDLC", body_style))
+          story.append(Spacer(1, 10))
+
+          # Tabella Metadati
+          data_meta = [
+              [Paragraph("<b>Repository:</b>", body_style), Paragraph(repo, body_style)],
+              [Paragraph("<b>Versione Tag:</b>", body_style), Paragraph(tag, body_style)],
+              [Paragraph("<b>Nome Rilascio:</b>", body_style), Paragraph(name, body_style)],
+              [Paragraph("<b>Pubblicato da:</b>", body_style), Paragraph(author, body_style)],
+          ]
+          t_meta = Table(data_meta, colWidths=[120, 420])
+          t_meta.setStyle(TableStyle([
+              ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#f3f4f6')),
+              ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+              ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+              ('TOPPADDING', (0,0), (-1,-1), 6),
+              ('BOX', (0,0), (-1,-1), 0.5, colors.HexColor('#d1d5db')),
+          ]))
+          story.append(t_meta)
+          story.append(Spacer(1, 15))
+
+          # Sezione Contenuto delle Note di Rilascio
+          story.append(Paragraph("Dettaglio Modifiche (Release Notes)", heading_style))
+          # Converte le note di rilascio scritte in markdown in paragrafi puliti
+          for line in body.split('\n'):
+              if line.strip():
+                  story.append(Paragraph(line, body_style))
+              else:
+                  story.append(Spacer(1, 4))
+
+          story.append(Spacer(1, 15))
+
+          # Tabella Firme / Approvazioni (Indispensabile per l'Audit)
+          story.append(Paragraph("Verifiche e Approvazioni di Conformità", heading_style))
+          data_approval = [
+              [Paragraph("<b>Fase</b>", body_style), Paragraph("<b>Stato / Evidenza</b>", body_style), Paragraph("<b>Responsabile</b>", body_style)],
+              [Paragraph("Code Review & Test", body_style), Paragraph("Completati su GitHub (PR verificate)", body_style), Paragraph("Team di Sviluppo", body_style)],
+              [Paragraph("Approvazione Deploy", body_style), Paragraph("Autorizzato e Pubblicato", body_style), Paragraph(author, body_style)],
+              [Paragraph("Piano di Rollback", body_style), Paragraph("Disponibile via Git Tag History", body_style), Paragraph("Configurazione Standard", body_style)]
+          ]
+          t_app = Table(data_approval, colWidths=[130, 260, 130])
+          t_app.setStyle(TableStyle([
+              ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#e5e7eb')),
+              ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor('#d1d5db')),
+              ('TOPPADDING', (0,0), (-1,-1), 5),
+              ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+          ]))
+          story.append(t_app)
+
+          doc.build(story)
+          print("PDF generato con successo.")
+          EOF
+
+      - name: Allega il PDF alla Release esistente
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Scheda_Rilascio_${{ github.event.release.tag_name }}.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

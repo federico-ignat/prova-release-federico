@@ -222,20 +222,7 @@ jobs:
           ]))
           story.append(t_meta)
           story.append(Spacer(1, 15))
-
-          # Sezione Contenuto delle Note di Rilascio
-          story.append(Paragraph("Dettaglio Modifiche (Release Notes)", heading_style))
-          # Converte le note di rilascio scritte in markdown in paragrafi puliti
-          for line in body.split('\n'):
-              if line.strip():
-                  story.append(Paragraph(line, body_style))
-              else:
-                  story.append(Spacer(1, 4))
-
-          story.append(Spacer(1, 15))
-
-          # Tabella Firme / Approvazioni (Indispensabile per l'Audit)
-          story.append(Paragraph("Verifiche e Approvazioni di Conformità", heading_style))
+          
           data_approval = [
               [Paragraph("<b>Fase</b>", body_style), Paragraph("<b>Stato / Evidenza</b>", body_style), Paragraph("<b>Responsabile</b>", body_style)],
               [Paragraph("Code Review & Test", body_style), Paragraph("Completati su GitHub (PR verificate)", body_style), Paragraph("Team di Sviluppo", body_style)],

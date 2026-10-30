@@ -188,7 +188,8 @@ jobs:
 
           t_rilascio.setStyle(TableStyle([
               ('GRID', (0,0), (-1,-1), 1, colors.black),
-              ('BACKGROUND', (0,0), (0,-1), colors.lightgrey),
+              ('BACKGROUND', (0,0), (-1, 0), colors.lightgrey),
+              ('BACKGROUND', (0,1), (-1, 1), colors.white),
           ]))
 
           story.append(t_rilascio)

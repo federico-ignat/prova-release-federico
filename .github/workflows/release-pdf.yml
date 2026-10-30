@@ -156,7 +156,8 @@ jobs:
 
           story.append(Paragraph("4. Test affiancamento con ICT Manager", heading_style))
 
-          data_validazione = ["Data di apertura", "Data di completamento", "Esito Test"],
+          data_validazione = [
+                             ["Data di apertura", "Data di completamento", "Esito Test"],
                              [ "30/10/2026", "30/10/2026", "Completato con esito positivo"]
           ]
 
@@ -172,7 +173,8 @@ jobs:
 
           story.append(Paragraph("5. Validazione per il rilascio", heading_style))
 
-          data_rilascio = ["Data di validazione", "Approvato da", "Note"],
+          data_rilascio = [
+                          ["Data di validazione", "Approvato da", "Note"],
                           [ "30/10/2026", "Marco Favagrossa"," "]
           ]
 
@@ -188,7 +190,8 @@ jobs:
 
           story.append(Paragraph("6. Rilascio in produzione", heading_style))
 
-          data_azioni = ["Data di Rilascio", "Responsabile Merge", "Note"],
+          data_azioni = [
+                        ["Data di Rilascio", "Responsabile Merge", "Note"],
                         [ "30/10/2026", "Federico Ignat", " "  ] 
           ]
 

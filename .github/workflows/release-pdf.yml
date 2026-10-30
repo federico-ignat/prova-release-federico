@@ -84,8 +84,8 @@ jobs:
           story.append(Paragraph("INFORMAZIONI PROGETTO", heading_style))
 
           data_progetto = [
-              ["Titolo Progetto", Rilascio PDF],
-              ["Sviluppatore Assegnato", Federico Ignat],
+              ["Titolo Progetto", "Rilascio PDF"],
+              ["Sviluppatore Assegnato", "Federico Ignat"],
               ["Data inizio sviluppo", 30/10/2026],
               ["Data di fine", 30/10/2026],
           ]
@@ -157,8 +157,8 @@ jobs:
           story.append(Paragraph("4. Test affiancamento con ICT Manager", heading_style))
 
           data_validazione = [
-                             ["Data di apertura", "Data di completamento", "Esito Test"],
-                             [ "30/10/2026", "30/10/2026", "Completato con esito positivo"]
+              ["Data di apertura", "Data di completamento", "Esito Test"],
+              ["30/10/2026", "30/10/2026", "Completato con esito positivo"]
           ]
 
           t_validazione = Table(data_validazione, colWidths=[250, 250])
@@ -173,9 +173,9 @@ jobs:
 
           story.append(Paragraph("5. Validazione per il rilascio", heading_style))
 
-          data_rilascio = [
-                          ["Data di validazione", "Approvato da", "Note"],
-                          [ "30/10/2026", "Marco Favagrossa"," "]
+           data_rilascio = [
+              ["Data di validazione", "Approvato da", "Note"],
+              ["30/10/2026", "Marco Favagrossa", ""]
           ]
 
           t_rilascio = Table(data_rilascio, colWidths=[200, 300])
@@ -191,8 +191,8 @@ jobs:
           story.append(Paragraph("6. Rilascio in produzione", heading_style))
 
           data_azioni = [
-                        ["Data di Rilascio", "Responsabile Merge", "Note"],
-                        [ "30/10/2026", "Federico Ignat", " "  ] 
+              ["Data di Rilascio", "Responsabile Merge", "Note"],
+              ["30/10/2026", "Federico Ignat", ""]
           ]
 
           t_azioni = Table(data_azioni, colWidths=[350, 150])

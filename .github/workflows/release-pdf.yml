@@ -1,0 +1,35 @@
+name: Genera PDF Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installa Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Installa libreria PDF
+        run: pip install reportlab
+
+      - name: Genera PDF
+        run: |
+          python << EOF
+          from reportlab.pdfgen import canvas
+
+          c = canvas.Canvas("release.pdf")
+          c.drawString(100, 750, "PDF generato automaticamente")
+          c.save()
+          EOF
+
+      - name: Allega PDF alla Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release.pdf

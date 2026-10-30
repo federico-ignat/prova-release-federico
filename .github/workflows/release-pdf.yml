@@ -173,7 +173,7 @@ jobs:
 
           story.append(Paragraph("5. Validazione per il rilascio", heading_style))
 
-           data_rilascio = [
+          data_rilascio = [
               ["Data di validazione", "Approvato da", "Note"],
               ["30/10/2026", "Marco Favagrossa", ""]
           ]

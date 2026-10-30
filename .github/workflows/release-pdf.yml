@@ -82,8 +82,6 @@ jobs:
           story.append(Paragraph("<b>Controllo di Riferimento:</b> A.8.32 Change Management & A.8.25 Secure SDLC", body_style))
           story.append(Spacer(1, 10))
 
-        
-
           # Tabella Metadati
           data_meta = [
               [Paragraph("<b>Repository:</b>", body_style), Paragraph(repo, body_style)],

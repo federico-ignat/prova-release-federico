@@ -36,7 +36,7 @@ jobs:
           import os
           import json
           from reportlab.lib.pagesizes import letter
-          from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+          from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
           from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
           from reportlab.lib import colors
 
@@ -215,7 +215,9 @@ jobs:
           story.append(t_azioni)
           story.append(Spacer(1,5))
           
-          doc.build(story)
+          story.append(PageBreak())
+          
+          doc.build(story)  
           print("PDF generato con successo.")
           EOF
 

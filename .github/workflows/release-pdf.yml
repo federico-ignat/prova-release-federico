@@ -139,9 +139,9 @@ jobs:
           data_test = [
               ["Data di apertura", "Data di completamento", "Bug riscontrati"],
               ["30/10/2026", "30/10/2026", 
-              " -L'action non riusciva ad allegare Il PDF alla release" 
-              " -Errori di sintassi YAML"
-              " -Problemi di impaginazione del PDF"]
+              "- L'action non riusciva ad allegare Il PDF alla release\n" 
+              "- Errori di sintassi YAML\n"
+              "- Problemi di impaginazione del PDF"]
           ]
 
           t_test = Table(data_test, colWidths=[180, 120, 200])

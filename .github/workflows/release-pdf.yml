@@ -31,6 +31,7 @@ jobs:
           RELEASE_NAME: ${{ github.event.release.name }}
           RELEASE_BODY: ${{ github.event.release.body }}
           AUTHOR: ${{ github.event.release.author.login }}
+          RELEASE_DATE: ${{ github.event.release.published_at }}
         run: |
           python3 - <<'EOF'
           import os
@@ -46,6 +47,8 @@ jobs:
           name = os.environ['RELEASE_NAME'] or tag
           body = os.environ['RELEASE_BODY'] or "Nessuna nota inserita."
           author = os.environ['AUTHOR']
+          release_date = os.environ['RELEASE_DATE']
+
 
           pdf_filename = f"Scheda_Rilascio_{tag}.pdf"
           doc = SimpleDocTemplate(pdf_filename, pagesize=letter,
@@ -86,8 +89,8 @@ jobs:
           data_progetto = [
               ["Titolo Progetto", "Rilascio PDF"],
               ["Sviluppatore Assegnato", "Federico Ignat"],
-              ["Data inizio sviluppo", "30/10/2026"],
-              ["Data di fine", "30/10/2026"],
+              ["Data inizio sviluppo", release_date[:10]],
+              ["Data di fine",  release_date[:10]],
           ]
 
           t_progetto = Table(data_progetto, colWidths=[180, 320])
@@ -104,7 +107,7 @@ jobs:
 
           data_analisi = [
               ["Data Apertura", "Data Completamento", "Note"],
-              ["30/10/2026", "30/10/2026", "Analisi requisiti completata"]
+              [ release_date[:10],  release_date[:10], "Analisi requisiti completata"]
           ]
 
           t_analisi = Table(data_analisi, colWidths=[100, 100, 300])
@@ -121,7 +124,7 @@ jobs:
 
           data_sviluppo = [
               ["Data di apertura", "Data di completamento", "Branch"],
-              ["30/10/2026", "30/10/2026", tag]
+              [ release_date[:10],  release_date[:10], tag]
               ]
 
           t_sviluppo = Table(data_sviluppo, colWidths=[180, 120, 200])
@@ -138,7 +141,7 @@ jobs:
 
           data_test = [
               ["Data di apertura", "Data di completamento", "Bug riscontrati"],
-              ["30/10/2026", "30/10/2026", 
+              [ release_date[:10],  release_date[:10], 
               "- L'action non riusciva ad allegare Il PDF \n alla release \n" 
               "- Errori di sintassi YAML\n"
               "- Problemi di impaginazione del PDF"]
@@ -158,7 +161,7 @@ jobs:
 
           data_validazione = [
               ["Data di apertura", "Data di completamento", "Esito Test"],
-              ["30/10/2026", "30/10/2026", "Completato con esito positivo"]
+              [ release_date[:10], release_date[:10], "Completato con esito positivo"]
           ]
 
           t_validazione = Table(
@@ -178,7 +181,7 @@ jobs:
 
           data_rilascio = [
               ["Data di validazione", "Approvato da", "Note"],
-              ["30/10/2026", "Marco Favagrossa", ""]
+              [ release_date[:10], "Marco Favagrossa", ""]
           ]
 
           t_rilascio = Table(
@@ -199,7 +202,7 @@ jobs:
 
           data_azioni = [
               ["Data di Rilascio", "Responsabile Merge", "Note"],
-              ["30/10/2026", "Federico Ignat", ""]
+              [ release_date[:10], "Federico Ignat", ""]
           ]
 
           t_azioni = Table(
@@ -226,12 +229,28 @@ jobs:
 
           data_controlli = [
           ["N°", "Controllo", "Implementazione", "Descrizione"],
-          ["5.1", "Controllo del codice sorgente", "SI", ""]
+          ["5.1", "Controllo del codice sorgente", "SI", ""],
+          ["5.2", "Gestione del repository", "SI", ""],
+          ["5.3", "Revisione e analisi del codice", "SI", ""],
+          ["5.4", "Gestione delle vulnerabilità", "NO", "Libreria N.Cafe 5.11.0 non applicabile"],
+          ["5.5", "Bootstrapping", "SI", ""],
+          ["5.6", "Gestione dei parametri di configurazione", "SI", "Gestione tramite file di congigurazione"],
+          ["5.7", "Cryptographic Agility", "SI", ""],
+          ["5.8", "Gestione della memoria", "SI", ""],
+          ["5.9", "Type-Safe Practices", "SI", ""],
+          ["5.10", "Locality", "SI", ""],
+          ["5.11", "Gestione degli errori", "SI", "Gestione delle eccezioni implementari"],
+          ["5.12", "Interface Coding (API)", "SI", ""],
+          ["5.13", "Session Management", "NO", "Applicazione stateless, nessuna sessione utente"],
+          ["5.14", "Strumenti di cifratura", "SI", ""],
+          ["5.15", "Input Validation", "SI", "Validazione degli input implementari"], 
+          ["5.16", "Input Validation", "SI", "Validazione degli output implementari"]
+          
             ]
 
           t_controlli = Table(
           data_controlli,
-          colWidths=[50, 180, 100, 210]
+          colWidths=[45 , 180, 90, 225]
             )
 
           t_controlli.setStyle(TableStyle([

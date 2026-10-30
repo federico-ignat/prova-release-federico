@@ -222,21 +222,6 @@ jobs:
           ]))
           story.append(t_meta)
           story.append(Spacer(1, 15))
-          
-          data_approval = [
-              [Paragraph("<b>Fase</b>", body_style), Paragraph("<b>Stato / Evidenza</b>", body_style), Paragraph("<b>Responsabile</b>", body_style)],
-              [Paragraph("Code Review & Test", body_style), Paragraph("Completati su GitHub (PR verificate)", body_style), Paragraph("Team di Sviluppo", body_style)],
-              [Paragraph("Approvazione Deploy", body_style), Paragraph("Autorizzato e Pubblicato", body_style), Paragraph(author, body_style)],
-              [Paragraph("Piano di Rollback", body_style), Paragraph("Disponibile via Git Tag History", body_style), Paragraph("Configurazione Standard", body_style)]
-          ]
-          t_app = Table(data_approval, colWidths=[130, 260, 130])
-          t_app.setStyle(TableStyle([
-              ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#e5e7eb')),
-              ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor('#d1d5db')),
-              ('TOPPADDING', (0,0), (-1,-1), 5),
-              ('BOTTOMPADDING', (0,0), (-1,-1), 5),
-          ]))
-          story.append(t_app)
 
           doc.build(story)
           print("PDF generato con successo.")

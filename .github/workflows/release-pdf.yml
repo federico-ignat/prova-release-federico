@@ -86,8 +86,8 @@ jobs:
           data_progetto = [
               ["Titolo Progetto", "Rilascio PDF"],
               ["Sviluppatore Assegnato", "Federico Ignat"],
-              ["Data inizio sviluppo", 30/10/2026],
-              ["Data di fine", 30/10/2026],
+              ["Data inizio sviluppo", "30/10/2026"],
+              ["Data di fine", "30/10/2026"],
           ]
 
           t_progetto = Table(data_progetto, colWidths=[180, 320])

@@ -202,8 +202,7 @@ jobs:
           ]))
 
           story.append(t_azioni)
-          story.append(Spacer(1, 15))
-
+          
           doc.build(story)
           print("PDF generato con successo.")
           EOF

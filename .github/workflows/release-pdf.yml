@@ -104,7 +104,7 @@ jobs:
 
           data_analisi = [
               ["Data Apertura", "Data Completamento", "Note"],
-              ["30/10/2026", "30/10/2026", Analisi requisiti completata]
+              ["30/10/2026", "30/10/2026", "Analisi requisiti completata"]
           ]
 
           t_analisi = Table(data_analisi, colWidths=[100, 100, 300])
@@ -121,8 +121,8 @@ jobs:
 
           data_sviluppo = [
               ["Data di apertura", "Data di completamento", "Branch"],
-              [30/10/2026, 30/10/2026, prova-release-federico]
-          ]
+              ["30/10/2026", "30/10/2026", tag]
+              ]
 
           t_sviluppo = Table(data_sviluppo, colWidths=[180, 120, 200])
 
@@ -157,7 +157,7 @@ jobs:
           story.append(Paragraph("4. Test affiancamento con ICT Manager", heading_style))
 
           data_validazione = ["Data di apertura", "Data di completamento", "Esito Test"],
-                             [ 30/10/2026, 30/10/2026, Completato con esito positivo]
+                             [ "30/10/2026", "30/10/2026", "Completato con esito positivo"]
           ]
 
           t_validazione = Table(data_validazione, colWidths=[250, 250])
@@ -173,7 +173,7 @@ jobs:
           story.append(Paragraph("5. Validazione per il rilascio", heading_style))
 
           data_rilascio = ["Data di validazione", "Approvato da", "Note"],
-                          [ 30/10/2026, Marco Favagrossa, 
+                          [ "30/10/2026", "Marco Favagrossa"," "]
           ]
 
           t_rilascio = Table(data_rilascio, colWidths=[200, 300])
@@ -189,7 +189,7 @@ jobs:
           story.append(Paragraph("6. Rilascio in produzione", heading_style))
 
           data_azioni = ["Data di Rilascio", "Responsabile Merge", "Note"],
-                        [ 30/10/2026, Federico Ignat,    ] 
+                        [ "30/10/2026", "Federico Ignat", " "  ] 
           ]
 
           t_azioni = Table(data_azioni, colWidths=[350, 150])

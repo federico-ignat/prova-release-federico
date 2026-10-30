@@ -205,24 +205,6 @@ jobs:
           story.append(t_azioni)
           story.append(Spacer(1, 15))
 
-          # Tabella Metadati
-          data_meta = [
-              [Paragraph("<b>Repository:</b>", body_style), Paragraph(repo, body_style)],
-              [Paragraph("<b>Versione Tag:</b>", body_style), Paragraph(tag, body_style)],
-              [Paragraph("<b>Nome Rilascio:</b>", body_style), Paragraph(name, body_style)],
-              [Paragraph("<b>Pubblicato da:</b>", body_style), Paragraph(author, body_style)],
-          ]
-          t_meta = Table(data_meta, colWidths=[120, 420])
-          t_meta.setStyle(TableStyle([
-              ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#f3f4f6')),
-              ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-              ('BOTTOMPADDING', (0,0), (-1,-1), 6),
-              ('TOPPADDING', (0,0), (-1,-1), 6),
-              ('BOX', (0,0), (-1,-1), 0.5, colors.HexColor('#d1d5db')),
-          ]))
-          story.append(t_meta)
-          story.append(Spacer(1, 15))
-
           doc.build(story)
           print("PDF generato con successo.")
           EOF

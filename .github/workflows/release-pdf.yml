@@ -214,8 +214,6 @@ jobs:
 
           story.append(t_azioni)
           story.append(Spacer(1,5))
-          
-          story.append(PageBreak())
 
           story.append(
           Paragraph(
@@ -223,8 +221,10 @@ jobs:
           title_style
             )
           )
-  
-          story.append(Spacer(1, 15))
+
+          data_controlli = [
+              ["N°", "Controllo", "Implementazione", "Descrizione"]
+          ]  
           
           doc.build(story)  
           print("PDF generato con successo.")

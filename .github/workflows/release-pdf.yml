@@ -205,56 +205,7 @@ jobs:
           story.append(t_azioni)
           story.append(Spacer(1, 15))
 
-          # Tabella Metadati
-          data_meta = [
-              [Paragraph("<b>Repository:</b>", body_style), Paragraph(repo, body_style)],
-              [Paragraph("<b>Versione Tag:</b>", body_style), Paragraph(tag, body_style)],
-              [Paragraph("<b>Nome Rilascio:</b>", body_style), Paragraph(name, body_style)],
-              [Paragraph("<b>Pubblicato da:</b>", body_style), Paragraph(author, body_style)],
-          ]
-          t_meta = Table(data_meta, colWidths=[120, 420])
-          t_meta.setStyle(TableStyle([
-              ('BACKGROUND', (0,0), (-1,-1), colors.HexColor('#f3f4f6')),
-              ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-              ('BOTTOMPADDING', (0,0), (-1,-1), 6),
-              ('TOPPADDING', (0,0), (-1,-1), 6),
-              ('BOX', (0,0), (-1,-1), 0.5, colors.HexColor('#d1d5db')),
-          ]))
-          story.append(t_meta)
-          story.append(Spacer(1, 15))
-
-          # Sezione Contenuto delle Note di Rilascio
-          story.append(Paragraph("Dettaglio Modifiche (Release Notes)", heading_style))
-          # Converte le note di rilascio scritte in markdown in paragrafi puliti
-          for line in body.split('\n'):
-              if line.strip():
-                  story.append(Paragraph(line, body_style))
-              else:
-                  story.append(Spacer(1, 4))
-
-          story.append(Spacer(1, 15))
-
-          # Tabella Firme / Approvazioni (Indispensabile per l'Audit)
-          story.append(Paragraph("Verifiche e Approvazioni di Conformità", heading_style))
-          data_approval = [
-              [Paragraph("<b>Fase</b>", body_style), Paragraph("<b>Stato / Evidenza</b>", body_style), Paragraph("<b>Responsabile</b>", body_style)],
-              [Paragraph("Code Review & Test", body_style), Paragraph("Completati su GitHub (PR verificate)", body_style), Paragraph("Team di Sviluppo", body_style)],
-              [Paragraph("Approvazione Deploy", body_style), Paragraph("Autorizzato e Pubblicato", body_style), Paragraph(author, body_style)],
-              [Paragraph("Piano di Rollback", body_style), Paragraph("Disponibile via Git Tag History", body_style), Paragraph("Configurazione Standard", body_style)]
-          ]
-          t_app = Table(data_approval, colWidths=[130, 260, 130])
-          t_app.setStyle(TableStyle([
-              ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#e5e7eb')),
-              ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor('#d1d5db')),
-              ('TOPPADDING', (0,0), (-1,-1), 5),
-              ('BOTTOMPADDING', (0,0), (-1,-1), 5),
-          ]))
-          story.append(t_app)
-
-          doc.build(story)
-          print("PDF generato con successo.")
-          EOF
-
+         
       - name: Allega il PDF alla Release esistente
         uses: softprops/action-gh-release@v2
         with:

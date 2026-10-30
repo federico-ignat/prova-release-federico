@@ -139,7 +139,7 @@ jobs:
           data_test = [
               ["Data di apertura", "Data di completamento", "Bug riscontrati"],
               ["30/10/2026", "30/10/2026", 
-              "- L'action non riusciva ad allegare Il PDF alla\n release\n" 
+              "- L'action non riusciva ad allegare Il PDF \n alla release \n" 
               "- Errori di sintassi YAML\n"
               "- Problemi di impaginazione del PDF"]
           ]
@@ -216,6 +216,15 @@ jobs:
           story.append(Spacer(1,5))
           
           story.append(PageBreak())
+
+          story.append(
+          Paragraph(
+          "DOCUMENTO DI APPLICABILITA' DEI CONTROLLI",
+          title_style
+            )
+          )
+  
+          story.append(Spacer(1, 15))
           
           doc.build(story)  
           print("PDF generato con successo.")

@@ -249,7 +249,7 @@ jobs:
           ["5.3", "Revisione e analisi del codice", "SI", ""],
           ["5.4", "Gestione delle vulnerabilità", "NO", "Libreria N.Cafe 5.11.0 non applicabile"],
           ["5.5", "Bootstrapping", "SI", ""],
-          ["5.6", "Gestione dei parametri di configurazione", "SI", "Gestione tramite file di congigurazione"],
+          ["5.6", "Gestione parametri di configurazione", "SI", "Gestione tramite file di congigurazione"],
           ["5.7", "Cryptographic Agility", "SI", ""],
           ["5.8", "Gestione della memoria", "SI", ""],
           ["5.9", "Type-Safe Practices", "SI", ""],

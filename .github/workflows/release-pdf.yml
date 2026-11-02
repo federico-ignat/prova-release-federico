@@ -120,7 +120,7 @@ jobs:
           story.append(Paragraph("1. Analisi delle specifiche", heading_style))
 
           data_analisi = [
-              ["Data di Apertura", "Data di completamento", "Note"],
+              ["Data Apertura", "Data Chiusura", "Note"],
               [ "2026-10-30",  release_date[:10], "Analisi requisiti completata"]
           ]
 

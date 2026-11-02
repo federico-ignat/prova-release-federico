@@ -3,6 +3,20 @@ name: Genera PDF Release Notes per ISO 27001
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag della release"
+        required: false
+        default: ""
+      release_name:
+        description: "Nome della release"
+        required: false
+        default: ""
+      body:
+        description: "Testo della release"
+        required: false
+        default: ""
 
 jobs:
   build-pdf:

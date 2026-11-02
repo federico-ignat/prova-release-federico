@@ -38,18 +38,16 @@ jobs:
           pip install reportlab requests
 
       - name: Genera il documento PDF di rilascio
-      env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      REPOSITORY: ${{ github.repository }}
-      TAG_NAME: ${{ github.event.release.tag_name || github.event.inputs.tag || github.ref_name }}
-      RELEASE_NAME: ${{ github.event.release.name || github.event.inputs.release_name || github.event.inputs.tag || github.ref_name }}
-      RELEASE_BODY: ${{ github.event.release.body || github.event.inputs.body || 'Nessuna nota inserita.' }}
-      AUTHOR: ${{ github.event.release.author.login || github.actor }}
-      RELEASE_DATE: ${{ github.event.release.published_at || github.event.repository.updated_at || github.run_started_at }}
-      run: |
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          TAG_NAME: ${{ github.event.release.tag_name || github.event.inputs.tag || github.ref_name }}
+          RELEASE_NAME: ${{ github.event.release.name || github.event.inputs.release_name || github.event.inputs.tag || github.ref_name }}
+          RELEASE_BODY: ${{ github.event.release.body || github.event.inputs.body || 'Nessuna nota inserita.' }}
+          AUTHOR: ${{ github.event.release.author.login || github.actor }}
+          RELEASE_DATE: ${{ github.event.release.published_at || github.event.repository.updated_at || github.run_started_at }}
+        run: |
           python3 - <<'EOF'
-           ...
-          EOF
           import os
           import json
           from reportlab.lib.pagesizes import letter
@@ -281,7 +279,6 @@ jobs:
           print("PDF generato con successo.")
           EOF
 
-         
       - name: Allega il PDF alla Release esistente
         uses: softprops/action-gh-release@v2
         with:

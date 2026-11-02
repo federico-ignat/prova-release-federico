@@ -8,7 +8,7 @@
 Questo progetto genera automaticamente un scheda di rilascio in formato PDF quando viene pubblicata una Release GitHub.
 
 L'obbiettivo è supportare il processo di conformità ISO 27001 automatizzando la raccolta delle informazioni di rilascio e la generazione della documentazione associata.
-
+    
 ---
 
 ## Funzionamento

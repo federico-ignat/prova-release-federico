@@ -107,8 +107,8 @@ Allegato automatico alla Release
 
 ## Possibili Evoluzioni Future
 
--Recupero automatico delle informazioni dalla descrizione della Release
--Inserimento del logo aziendale
--Generazione automatica delle checklist di sicurezza
--Integrazione con controlli ISO 27001 aggiuntivi
+-Recupero automatico delle informazioni dalla descrizione della Release <br>
+-Inserimento del logo aziendale <br>
+-Generazione automatica delle checklist di sicurezza <br>
+-Integrazione con controlli ISO 27001 aggiuntivi <br>
   

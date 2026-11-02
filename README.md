@@ -88,23 +88,16 @@ Controlli del Secure Coding:
 ## Esempio workflow
 
 Release GitHub
-|
-|
-V
+
 
 GitHub Action 
-|
-|
-V
+
 
 Generazione PDF 
-|
-|
-V
+
+
 Allegato automatico alla Release
-|
-|
-V
+
 
 ---
 

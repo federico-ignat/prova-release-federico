@@ -1,8 +1,8 @@
 # ISO 27001 Release PDF Generator
 
-![Python] (https://Img.shields.io/badge/Phython-3.10-blue)
-![GitHub Actions] (https://img.shields.io/badge/GitHub-Action-green)
-![ISO27001] (https://img.shields.io/badge/ISO-27001-orange)
+![Python] (https://Img.shields.io/badge/Phython-3.10-blue) <br>
+![GitHub Actions] (https://img.shields.io/badge/GitHub-Action-green) <br>
+![ISO27001] (https://img.shields.io/badge/ISO-27001-orange) <br>
 
 ### Descrizione
 Questo progetto genera automaticamente un scheda di rilascio in formato PDF quando viene pubblicata una Release GitHub.

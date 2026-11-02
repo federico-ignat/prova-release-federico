@@ -87,8 +87,8 @@ jobs:
           story.append(Paragraph("INFORMAZIONI PROGETTO", heading_style))
 
           data_progetto = [
-              ["Titolo Progetto", "Rilascio PDF"],
-              ["Sviluppatore Assegnato", "Federico Ignat"],
+              ["Titolo Progetto", name],
+              ["Sviluppatore Assegnato", author],
               ["Data inizio sviluppo", release_date[:10]],
               ["Data di fine",  release_date[:10]],
           ]

@@ -126,7 +126,7 @@ jobs:
               [ "2026-10-30",  release_date[:10], "Analisi requisiti completata"]
           ]
 
-          t_analisi = Table(data_analisi, colWidths=[100, 100, 300])
+          t_analisi = Table(data_analisi, colWidths=[120, 120, 260])
 
           t_analisi.setStyle(TableStyle([
               ('GRID', (0,0), (-1,-1), 1, colors.black),
@@ -143,7 +143,7 @@ jobs:
               [ "2026-10-30",  release_date[:10], tag]
               ]
 
-          t_sviluppo = Table(data_sviluppo, colWidths=[100, 100, 200])
+          t_sviluppo = Table(data_sviluppo, colWidths=[120, 120, 260])
 
           t_sviluppo.setStyle(TableStyle([
               ('GRID', (0,0), (-1,-1), 1, colors.black),
@@ -163,8 +163,7 @@ jobs:
               "- Problemi di impaginazione del PDF"]
           ]
 
-          t_test = Table(data_test, colWidths=[100, 100, 200])
-
+          t_test = Table(data_test, colWidths=[120, 120, 260])
           t_test.setStyle(TableStyle([
               ('GRID', (0,0), (-1,-1), 1, colors.black),
               ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
@@ -183,7 +182,7 @@ jobs:
 
           t_validazione = Table(
               data_validazione, 
-              colWidths=[100, 100, 260]
+              colWidths=[120, 120, 260]
           )
 
           t_validazione.setStyle(TableStyle([
@@ -203,7 +202,7 @@ jobs:
 
           t_rilascio = Table(
               data_rilascio, 
-              colWidths=[100, 100, 200]
+              colWidths=[120, 120, 260]
           )
 
           t_rilascio.setStyle(TableStyle([
@@ -224,7 +223,7 @@ jobs:
 
           t_azioni = Table(
               data_azioni,
-              colWidths=[100, 100, 200]
+              colWidths=[120, 120, 260]
           )
 
           t_azioni.setStyle(TableStyle([
@@ -245,7 +244,7 @@ jobs:
 
           t_azioni = Table(
               data_azioni,
-              colWidths=[100, 100, 200]
+              colWidths=[120, 120, 260]
           )
 
           t_azioni.setStyle(TableStyle([
@@ -266,7 +265,7 @@ jobs:
 
           t_azioni = Table(
               data_azioni,
-              colWidths=[100, 100, 200]
+              colWidths=[120, 120, 260]
           )
 
           t_azioni.setStyle(TableStyle([

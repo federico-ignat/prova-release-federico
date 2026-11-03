@@ -143,7 +143,7 @@ jobs:
               [ "2026-10-30",  release_date[:10], tag]
               ]
 
-          t_sviluppo = Table(data_sviluppo, colWidths=[180, 120, 200])
+          t_sviluppo = Table(data_sviluppo, colWidths=[100, 100, 200])
 
           t_sviluppo.setStyle(TableStyle([
               ('GRID', (0,0), (-1,-1), 1, colors.black),
@@ -163,7 +163,7 @@ jobs:
               "- Problemi di impaginazione del PDF"]
           ]
 
-          t_test = Table(data_test, colWidths=[180, 120, 200])
+          t_test = Table(data_test, colWidths=[100, 100, 200])
 
           t_test.setStyle(TableStyle([
               ('GRID', (0,0), (-1,-1), 1, colors.black),
@@ -183,7 +183,7 @@ jobs:
 
           t_validazione = Table(
               data_validazione, 
-              colWidths=[120, 120, 260]
+              colWidths=[100, 100, 260]
           )
 
           t_validazione.setStyle(TableStyle([
@@ -203,7 +203,7 @@ jobs:
 
           t_rilascio = Table(
               data_rilascio, 
-              colWidths=[120, 120, 260]
+              colWidths=[100, 100, 200]
           )
 
           t_rilascio.setStyle(TableStyle([
@@ -224,7 +224,7 @@ jobs:
 
           t_azioni = Table(
               data_azioni,
-              colWidths=[120, 120, 260]
+              colWidths=[100, 100, 200]
           )
 
           t_azioni.setStyle(TableStyle([
@@ -245,7 +245,7 @@ jobs:
 
           t_azioni = Table(
               data_azioni,
-              colWidths=[120, 120, 260]
+              colWidths=[100, 100, 200]
           )
 
           t_azioni.setStyle(TableStyle([
@@ -266,7 +266,7 @@ jobs:
 
           t_azioni = Table(
               data_azioni,
-              colWidths=[120, 120, 260]
+              colWidths=[100, 100, 200]
           )
 
           t_azioni.setStyle(TableStyle([

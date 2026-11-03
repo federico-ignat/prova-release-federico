@@ -93,7 +93,7 @@ jobs:
               parent=styles['Normal'],
               fontSize=10,
               textColor=colors.HexColor('#374151'),
-              spaceAfter=8
+              spaceAfter=2
           )
 
           # Intestazione documento per conformità ISO 27001

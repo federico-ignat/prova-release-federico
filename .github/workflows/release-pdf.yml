@@ -239,7 +239,7 @@ jobs:
           story.append(Paragraph("7. Manutenzioni e aggiornamenti", heading_style))
 
           data_azioni = [
-              ["Feedback ricevuti", "Azioni corretive(se previste)", "Note"],
+              ["Feedback ricevuti", "Azioni corretive", "Note"],
               [ "Esito positivo", "", ""]
           ]
 

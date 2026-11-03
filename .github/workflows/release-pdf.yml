@@ -255,18 +255,15 @@ jobs:
 
           story.append(t_azioni)
           story.append(Spacer(1,15))
-
+          
           story.append(PageBreak())
-           story.append(
-              KeepTogether([
-              Paragraph(
-              "8. Azioni correttive",
-              heading_style
-              ),
-              t_azioni
-            )]
-          )
 
+          story.append(
+              Paragraph(
+                "8. Azioni corretive",
+                heading_style
+                )
+              )
           data_azioni = [
               ["Descrizione azione", "Data inizio e chiusura", "Responsabile dell'azione"],
               [ "", "", ""]
@@ -282,9 +279,7 @@ jobs:
               ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
           ]))
 
-          story.append(
-              KeepTogether([t_azioni])
-          )
+          story.append(t_azioni)
           story.append(Spacer(1,15))
 
           story.append(

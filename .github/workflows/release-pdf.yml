@@ -72,8 +72,14 @@ jobs:
             page_num = canvas.getPageNumber()
             canvas.line(40, 30, 560, 30)
             canvas.line("Helvatica", 8)
-            canvas.drawString(40, 15, "Scheda di Rilascio")
-            canvas.drawRightString(560, 15, f"Pagina {page_num}"
+            canvas.drawString(
+            40, 
+            15, 
+            "Scheda di Rilascio"
+            )
+            canvas.drawRightString(560, 
+            15, 
+            f"Pagina {page_num}"
             )
           story = []
           styles = getSampleStyleSheet()

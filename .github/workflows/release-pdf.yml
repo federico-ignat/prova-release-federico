@@ -54,7 +54,6 @@ jobs:
           from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
           from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
           from reportlab.lib import colors
-          from reportlab.platypus import KeepTogether
 
           # Recupera le variabili d'ambiente passate da GitHub
           repo = os.environ['REPOSITORY']

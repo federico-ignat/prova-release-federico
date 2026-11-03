@@ -74,16 +74,18 @@ jobs:
           # Stili personalizzati
           title_style = ParagraphStyle(
               'TitleStyle',
-              parent=styles['Helvetica'],
+              parent=styles['Normal'],
+              fontName= 'Helvetica-Bold',
               fontSize=18,
               textColor=colors.HexColor('#1f2937'),
               spaceAfter=12
           )
           heading_style = ParagraphStyle(
               'HeadingStyle',
-              parent=styles['Helvetica-Bold'],
+              parent=styles['Normal'],
+              fontName= 'Helvetica',
               fontSize=10,
-              textColor=colors.HexColor('#4b5563'),
+              textColor=colors.HexColor('#374151'),
               spaceAfter=6
           )
           body_style = ParagraphStyle(

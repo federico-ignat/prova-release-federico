@@ -54,6 +54,7 @@ jobs:
           from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
           from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
           from reportlab.lib import colors
+          from reportlab.platypus import KeepTogether
 
           # Recupera le variabili d'ambiente passate da GitHub
           repo = os.environ['REPOSITORY']
@@ -256,7 +257,15 @@ jobs:
           story.append(Spacer(1,15))
 
           story.append(PageBreak())
-          story.append(Paragraph("8. Azioni correttive(fase eventuale)", heading_style))
+           story.append(
+              KeepTogether([
+              Paragraph(
+              "8. Azioni correttive",
+              heading_style
+              ),
+              t_azioni
+            )]
+          )
 
           data_azioni = [
               ["Descrizione azione", "Data inizio e chiusura", "Responsabile dell'azione"],
@@ -266,7 +275,6 @@ jobs:
           t_azioni = Table(
               data_azioni,
               colWidths=[120, 120, 260]
-              from reportlab.platypus import KeepTogether
           )
 
           t_azioni.setStyle(TableStyle([
@@ -275,7 +283,7 @@ jobs:
           ]))
 
           story.append(
-              KeepTogether([t_azioni]
+              KeepTogether([t_azioni])
           )
           story.append(Spacer(1,15))
 

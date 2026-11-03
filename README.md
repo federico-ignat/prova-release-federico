@@ -82,10 +82,10 @@ Controlli del Secure Coding:
 
 ### Tecnologie Utilizzate
 
--GitHub Actions
--Python 3.10
--ReportLab
--GitHub Release
+-GitHub Actions <br>
+-Python 3.10 <br>
+-ReportLab <br>
+-GitHub Release <br>
 
 ---
 

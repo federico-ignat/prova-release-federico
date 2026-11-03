@@ -233,6 +233,48 @@ jobs:
           story.append(t_azioni)
           story.append(Spacer(1,15))
 
+          
+          story.append(Paragraph("7. Manutenzioni e aggiornamenti", heading_style))
+
+          data_azioni = [
+              ["Feedback ricevuti", "Azioni corretive(se previste)", "Note"],
+              [ "Esito positivo", "", ""]
+          ]
+
+          t_azioni = Table(
+              data_azioni,
+              colWidths=[180, 180, 180]
+          )
+
+          t_azioni.setStyle(TableStyle([
+              ('GRID', (0,0), (-1,-1), 1, colors.black),
+              ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+          ]))
+
+          story.append(t_azioni)
+          story.append(Spacer(1,15))
+
+          
+          story.append(Paragraph("8. Azioni correttive(fase eventuale)", heading_style))
+
+          data_azioni = [
+              ["Descrizione azione", "Data inizio e chiusura", "Responsabile dell'azione"],
+              [ "", "", ""]
+          ]
+
+          t_azioni = Table(
+              data_azioni,
+              colWidths=[180, 180, 180]
+          )
+
+          t_azioni.setStyle(TableStyle([
+              ('GRID', (0,0), (-1,-1), 1, colors.black),
+              ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+          ]))
+
+          story.append(t_azioni)
+          story.append(Spacer(1,15))
+
           story.append(
           Paragraph(
           "DOCUMENTO DI APPLICABILITA' DEI CONTROLLI",

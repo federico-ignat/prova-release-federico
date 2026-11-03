@@ -72,7 +72,7 @@ jobs:
           def add_page_number(canvas, doc):
             page_num = canvas.getPageNumber()
             
-            canvas.setFont("Helvatica", 8)
+            canvas.setFont("Helvetica", 8)
             
             canvas.drawString(
             40, 

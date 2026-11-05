@@ -1,0 +1,115 @@
+name: Genera modulo PDF di verifica
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  genera-pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configura Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Installa ReportLab
+        run: python -m pip install reportlab
+
+      - name: Genera il modulo PDF
+        run: |
+          python - <<'PY'
+          from reportlab.lib import colors
+          from reportlab.lib.enums import TA_CENTER
+          from reportlab.lib.pagesizes import A4, landscape
+          from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+          from reportlab.lib.units import mm
+          from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+          filename = "modulo-verifica-modifiche.pdf"
+
+          styles = getSampleStyleSheet()
+          title_style = ParagraphStyle(
+              "Titolo",
+              parent=styles["Title"],
+              alignment=TA_CENTER,
+              fontSize=16,
+              textColor=colors.HexColor("#1f2937"),
+              spaceAfter=8,
+          )
+          cell_style = ParagraphStyle(
+              "Cella",
+              parent=styles["BodyText"],
+              fontSize=8,
+              leading=10,
+          )
+
+          def cell(text):
+              return Paragraph(text, cell_style)
+
+          # Una riga di intestazione e sei righe vuote da compilare.
+          rows = [[
+              cell("N°"),
+              cell("File o area verificata"),
+              cell("Verifica effettuata"),
+              cell("Esito<br/>(OK/KO/N.A.)"),
+              cell("Note o evidenze"),
+              cell("Verificato da<br/>e data"),
+          ]]
+
+          for number in range(1, 7):
+              rows.append([
+                  cell(str(number)),
+                  cell(""),
+                  cell(""),
+                  cell(""),
+                  cell(""),
+                  cell(""),
+              ])
+
+          table = Table(
+              rows,
+              colWidths=[10 * mm, 48 * mm, 48 * mm, 28 * mm, 75 * mm, 64 * mm],
+              rowHeights=[14 * mm] + [22 * mm] * 6,
+              repeatRows=1,
+          )
+
+          table.setStyle(TableStyle([
+              ("GRID", (0, 0), (-1, -1), 0.8, colors.black),
+              ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+              ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+              ("ALIGN", (0, 0), (0, -1), "CENTER"),
+              ("LEFTPADDING", (0, 0), (-1, -1), 5),
+              ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+              ("TOPPADDING", (0, 0), (-1, -1), 5),
+              ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+          ]))
+
+          document = SimpleDocTemplate(
+              filename,
+              pagesize=landscape(A4),
+              leftMargin=12 * mm,
+              rightMargin=12 * mm,
+              topMargin=12 * mm,
+              bottomMargin=12 * mm,
+              title="Modulo di verifica delle modifiche",
+          )
+
+          document.build([
+              Paragraph("MODULO DI VERIFICA DELLE MODIFICHE", title_style),
+              Spacer(1, 5 * mm),
+              table,
+          ])
+
+          print(f"PDF generato: {filename}")
+          PY
+
+      - name: Rendi disponibile il PDF da scaricare
+        uses: actions/upload-artifact@v4
+        with:
+          name: modulo-verifica-modifiche
+          path: modulo-verifica-modifiche.pdf
+          if-no-files-found: error

@@ -287,3 +287,9 @@ jobs:
           files: Scheda_Rilascio_${{ github.event.release.tag_name }}.pdf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Carica PDF come Artifact
+        uses: actions/upload-artifact@v4
+        with:
+           name: pdf-test
+           path: Scheda_Rilascio_*.pdf

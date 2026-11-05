@@ -41,7 +41,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
-          TAG_NAME: ${{ github.event.release.tag_name || github.event.inputs.tag || github.ref_name }}
+          TAG_NAME: ${{ github.event.release.tag_name || github.event.inputs.test_tag || github.ref_name }}
           RELEASE_NAME: ${{ github.event.release.name || github.event.inputs.release_name || github.event.inputs.tag || github.ref_name }}
           RELEASE_BODY: ${{ github.event.release.body || github.event.inputs.body || 'Nessuna nota inserita.' }}
           AUTHOR: ${{ github.event.release.author.login || github.actor }}
@@ -63,8 +63,8 @@ jobs:
           author = os.environ['AUTHOR']
           release_date = os.environ['RELEASE_DATE']
 
-
-          pdf_filename = f"Scheda_Rilascio_{tag}.pdf"
+          safe_Tag = tag.replace("/", "-")
+          pdf_filename = f"Scheda_Rilascio_{safe_Tag}.pdf"
           doc = SimpleDocTemplate(pdf_filename, pagesize=letter,
                                   rightMargin=36, leftMargin=36,
                                   topMargin=36, bottomMargin=36)
@@ -345,8 +345,15 @@ jobs:
           EOF
 
       - name: Allega il PDF alla Release esistente
+        if: github.event.name == 'release'
         uses: softprops/action-gh-release@v2
         with:
           files: Scheda_Rilascio_${{ github.event.release.tag_name }}.pdf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Carica PDF come Artifact
+        uses: actions/upload-artifact@v4
+        with:
+           name: pdf-test
+           path: Scheda_Rilascio_*.pdf

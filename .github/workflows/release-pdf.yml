@@ -74,8 +74,9 @@ jobs:
             canvas.setFont("Helvetica", 8)
             canvas.drawString(40, 15, "Scheda di Rilascio")
             canvas.drawRightString(560, 15, f"Pagina {page_num}")
-            story = []
-            styles = getSampleStyleSheet()
+            
+          story = []
+          styles = getSampleStyleSheet()
 
           # Stili personalizzati
           title_style = ParagraphStyle(
@@ -241,7 +242,7 @@ jobs:
           story.append(t_azioni)
           story.append(Spacer(1,15))
 
-            story.append(Paragraph("7. Manutenzioni e aggiornamenti", heading_style))
+          story.append(Paragraph("7. Manutenzioni e aggiornamenti", heading_style))
 
           data_azioni = [
               ["Feedback ricevuti", "Azioni corretive", "Note"],

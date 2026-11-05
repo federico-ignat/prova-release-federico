@@ -69,21 +69,11 @@ jobs:
                                   rightMargin=36, leftMargin=36,
                                   topMargin=36, bottomMargin=36)
                                   
-          def add_pagenumber(canvas, doc):
-            page_num = canvas.getPageNumber()
-
-            canvas.setFont("Helvetica", 8)
-
-                canvas.drawString(
-            40, 
-            15, 
-            "Scheda di Rilascio"
-            )
-            canvas.drawRightString(
-            560, 
-            15, 
-            f"Pagina {page_num}"
-            )
+            def add_page_number(canvas, doc):
+          page_num = canvas.getPageNumber()
+          canvas.setFont("Helvetica", 8)
+          canvas.drawString(40, 15, "Scheda di Rilascio")
+          canvas.drawRightString(560, 15, f"Pagina {page_num}")
           story = []
           styles = getSampleStyleSheet()
 

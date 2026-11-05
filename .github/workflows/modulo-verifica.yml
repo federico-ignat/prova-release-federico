@@ -59,21 +59,26 @@ jobs:
           pages = [controls[:8], controls[8:]]
 
           def draw_page(page_number, page_controls):
-              pdf.setFont("Helvetica-Bold", 15)
-              pdf.drawCentredString(
-                  page_width / 2,
-                  page_height - 34,
-                  "DOCUMENTO DI APPLICABILITÀ DEI CONTROLLI",
-              )
-              pdf.setFont("Helvetica", 8)
-              pdf.drawString(
-                  margin,
-                  page_height - 51,
-                  "Compila o modifica i campi Implementazione e Descrizione direttamente nel PDF.",
-              )
+              if page_number == 1:
+                  pdf.setFont("Helvetica-Bold", 15)
+                  pdf.drawCentredString(
+                      page_width / 2,
+                      page_height - 34,
+                      "DOCUMENTO DI APPLICABILITÀ DEI CONTROLLI",
+                  )
+                  pdf.setFont("Helvetica", 8)
+                  pdf.drawString(
+                      margin,
+                      page_height - 51,
+                      "Compila o modifica i campi Implementazione e Descrizione direttamente nel PDF.",
+                  )
+                  table_top = page_height - 68
+              else:
+                  # La seconda pagina non ripete titolo e sottotitolo.
+                  table_top = page_height - 28
+
               pdf.drawRightString(page_width - margin, 20, f"Pagina {page_number} di 2")
 
-              table_top = page_height - 68
               table_bottom = table_top - header_height - len(page_controls) * row_height
               xs = [margin]
               for width in column_widths:
@@ -114,11 +119,11 @@ jobs:
                       value=implementation,
                       fontName="Helvetica",
                       fontSize=9,
-                      borderWidth=0.6,
-                      borderColor=colors.HexColor("#9ca3af"),
-                      fillColor=colors.white,
+                      borderWidth=0,
+                      borderColor=None,
+                      fillColor=None,
                       textColor=colors.black,
-                      forceBorder=True,
+                      forceBorder=False,
                   )
                   form.textfield(
                       name=f"descrizione_{number.replace('.', '_')}",
@@ -131,11 +136,11 @@ jobs:
                       fontName="Helvetica",
                       fontSize=8,
                       fieldFlags="multiline",
-                      borderWidth=0.6,
-                      borderColor=colors.HexColor("#9ca3af"),
-                      fillColor=colors.white,
+                      borderWidth=0,
+                      borderColor=None,
+                      fillColor=None,
                       textColor=colors.black,
-                      forceBorder=True,
+                      forceBorder=False,
                   )
 
               pdf.showPage()

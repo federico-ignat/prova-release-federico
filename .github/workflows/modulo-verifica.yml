@@ -85,19 +85,36 @@ jobs:
                   xs.append(xs[-1] + width)
 
               pdf.setFillColor(colors.lightgrey)
-              pdf.rect(margin, table_top - header_height, table_width, header_height, fill=1, stroke=0)
+              pdf.rect(
+                  margin,
+                  table_top - header_height,
+                  table_width,
+                  header_height,
+                  fill=1,
+                  stroke=0,
+              )
+
               pdf.setStrokeColor(colors.black)
               pdf.setLineWidth(0.7)
+
               for x in xs:
                   pdf.line(x, table_bottom, x, table_top)
+
               pdf.line(margin, table_top, page_width - margin, table_top)
-              pdf.line(margin, table_top - header_height, page_width - margin, table_top - header_height)
+              pdf.line(
+                  margin,
+                  table_top - header_height,
+                  page_width - margin,
+                  table_top - header_height,
+              )
+
               for index in range(len(page_controls)):
                   y = table_top - header_height - (index + 1) * row_height
                   pdf.line(margin, y, page_width - margin, y)
 
               pdf.setFillColor(colors.black)
               pdf.setFont("Helvetica-Bold", 8)
+
               for index, heading in enumerate(headings):
                   center = xs[index] + column_widths[index] / 2
                   pdf.drawCentredString(center, table_top - 19, heading)
@@ -105,12 +122,23 @@ jobs:
               for index, (number, control, implementation, description) in enumerate(page_controls):
                   row_top = table_top - header_height - index * row_height
                   row_bottom = row_top - row_height
+
                   pdf.setFont("Helvetica", 8)
-                  pdf.drawCentredString(xs[0] + column_widths[0] / 2, row_bottom + row_height / 2 - 3, number)
-                  pdf.drawString(xs[1] + 6, row_bottom + row_height / 2 - 3, control)
+                  pdf.drawCentredString(
+                      xs[0] + column_widths[0] / 2,
+                      row_bottom + row_height / 2 - 3,
+                      number,
+                  )
+                  pdf.drawString(
+                      xs[1] + 6,
+                      row_bottom + row_height / 2 - 3,
+                      control,
+                  )
+
+                  field_name = number.replace(".", "_")
 
                   form.textfield(
-                      name=f"implementazione_{number.replace('.', '_')}",
+                      name=f"implementazione_{field_name}",
                       tooltip=f"Implementazione controllo {number}",
                       x=xs[2] + 4,
                       y=row_bottom + 5,
@@ -120,13 +148,13 @@ jobs:
                       fontName="Helvetica",
                       fontSize=9,
                       borderWidth=0,
-                      borderColor=None,
                       fillColor=None,
                       textColor=colors.black,
                       forceBorder=False,
                   )
+
                   form.textfield(
-                      name=f"descrizione_{number.replace('.', '_')}",
+                      name=f"descrizione_{field_name}",
                       tooltip=f"Descrizione controllo {number}",
                       x=xs[3] + 4,
                       y=row_bottom + 5,
@@ -137,7 +165,6 @@ jobs:
                       fontSize=8,
                       fieldFlags="multiline",
                       borderWidth=0,
-                      borderColor=None,
                       fillColor=None,
                       textColor=colors.black,
                       forceBorder=False,
@@ -145,8 +172,8 @@ jobs:
 
               pdf.showPage()
 
-          for number, page_controls in enumerate(pages, start=1):
-              draw_page(number, page_controls)
+          for page_number, page_controls in enumerate(pages, start=1):
+              draw_page(page_number, page_controls)
 
           pdf.save()
           print(f"PDF compilabile generato: {filename}")

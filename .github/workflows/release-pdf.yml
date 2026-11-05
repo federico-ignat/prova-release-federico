@@ -63,7 +63,7 @@ jobs:
           author = os.environ['AUTHOR']
           release_date = os.environ['RELEASE_DATE']
 
-
+          safe_Tag = tag.replace("/", "-")
           pdf_filename = f"Scheda_Rilascio_{tag}.pdf"
           doc = SimpleDocTemplate(pdf_filename, pagesize=letter,
                                   rightMargin=36, leftMargin=36,

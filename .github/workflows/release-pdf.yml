@@ -5,10 +5,10 @@ on:
     types: [published]
   workflow_dispatch:
     inputs:
-      tag:
+      test_tag:
         description: "Tag della release"
-        required: false
-        default: ""
+        required: true
+        default: "v-test"
       release_name:
         description: "Nome della release"
         required: false

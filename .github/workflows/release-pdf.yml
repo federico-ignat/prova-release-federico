@@ -69,7 +69,7 @@ jobs:
                                   rightMargin=36, leftMargin=36,
                                   topMargin=36, bottomMargin=36)
                                   
-          defe add_pagenumber(canvas, doc):
+          def add_pagenumber(canvas, doc):
             page_num = canvas.getPageNumber()
 
             canvas.setFont("Helvetica", 8)

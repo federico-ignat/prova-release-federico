@@ -1,4 +1,4 @@
-name: Genera modulo PDF di verifica
+name: Genera modulo PDF compilabile dei controlli
 
 on:
   workflow_dispatch:
@@ -19,97 +19,137 @@ jobs:
       - name: Installa ReportLab
         run: python -m pip install reportlab
 
-      - name: Genera il modulo PDF
+      - name: Genera il modulo PDF compilabile
         run: |
           python - <<'PY'
           from reportlab.lib import colors
-          from reportlab.lib.enums import TA_CENTER
           from reportlab.lib.pagesizes import A4, landscape
-          from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-          from reportlab.lib.units import mm
-          from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+          from reportlab.pdfgen import canvas
 
-          filename = "modulo-verifica-modifiche.pdf"
+          filename = "modulo-verifica-controlli.pdf"
+          page_width, page_height = landscape(A4)
+          pdf = canvas.Canvas(filename, pagesize=landscape(A4))
+          form = pdf.acroForm
 
-          styles = getSampleStyleSheet()
-          title_style = ParagraphStyle(
-              "Titolo",
-              parent=styles["Title"],
-              alignment=TA_CENTER,
-              fontSize=16,
-              textColor=colors.HexColor("#1f2937"),
-              spaceAfter=8,
-          )
-          cell_style = ParagraphStyle(
-              "Cella",
-              parent=styles["BodyText"],
-              fontSize=8,
-              leading=10,
-          )
+          controls = [
+              ("5.1", "Controllo del codice sorgente", "SI", ""),
+              ("5.2", "Gestione del repository", "SI", ""),
+              ("5.3", "Revisione e analisi del codice", "SI", ""),
+              ("5.4", "Gestione delle vulnerabilità", "NO", "Libreria N.Cafe 5.11.0 non applicabile"),
+              ("5.5", "Bootstrapping", "SI", ""),
+              ("5.6", "Gestione parametri di configurazione", "SI", "Gestione tramite file di congigurazione"),
+              ("5.7", "Cryptographic Agility", "SI", ""),
+              ("5.8", "Gestione della memoria", "SI", ""),
+              ("5.9", "Type-Safe Practices", "SI", ""),
+              ("5.10", "Locality", "SI", ""),
+              ("5.11", "Gestione degli errori", "SI", "Gestione delle eccezioni implementari"),
+              ("5.12", "Interface Coding (API)", "SI", ""),
+              ("5.13", "Session Management", "NO", "Applicazione stateless, nessuna sessione utente"),
+              ("5.14", "Strumenti di cifratura", "SI", ""),
+              ("5.15", "Input Validation", "SI", "Validazione degli input implementari"),
+              ("5.16", "Input Validation", "SI", "Validazione degli output implementari"),
+          ]
 
-          def cell(text):
-              return Paragraph(text, cell_style)
+          margin = 30
+          table_width = page_width - 2 * margin
+          column_widths = [42, 205, 95, table_width - 42 - 205 - 95]
+          header_height = 30
+          row_height = 42
+          headings = ["N°", "Controllo", "Implementazione", "Descrizione"]
+          pages = [controls[:8], controls[8:]]
 
-          # Una riga di intestazione e sei righe vuote da compilare.
-          rows = [[
-              cell("N°"),
-              cell("File o area verificata"),
-              cell("Verifica effettuata"),
-              cell("Esito<br/>(OK/KO/N.A.)"),
-              cell("Note o evidenze"),
-              cell("Verificato da<br/>e data"),
-          ]]
+          def draw_page(page_number, page_controls):
+              pdf.setFont("Helvetica-Bold", 15)
+              pdf.drawCentredString(
+                  page_width / 2,
+                  page_height - 34,
+                  "DOCUMENTO DI APPLICABILITÀ DEI CONTROLLI",
+              )
+              pdf.setFont("Helvetica", 8)
+              pdf.drawString(
+                  margin,
+                  page_height - 51,
+                  "Compila o modifica i campi Implementazione e Descrizione direttamente nel PDF.",
+              )
+              pdf.drawRightString(page_width - margin, 20, f"Pagina {page_number} di 2")
 
-          for number in range(1, 7):
-              rows.append([
-                  cell(str(number)),
-                  cell(""),
-                  cell(""),
-                  cell(""),
-                  cell(""),
-                  cell(""),
-              ])
+              table_top = page_height - 68
+              table_bottom = table_top - header_height - len(page_controls) * row_height
+              xs = [margin]
+              for width in column_widths:
+                  xs.append(xs[-1] + width)
 
-          table = Table(
-              rows,
-              colWidths=[10 * mm, 48 * mm, 48 * mm, 28 * mm, 75 * mm, 64 * mm],
-              rowHeights=[14 * mm] + [22 * mm] * 6,
-              repeatRows=1,
-          )
+              pdf.setFillColor(colors.lightgrey)
+              pdf.rect(margin, table_top - header_height, table_width, header_height, fill=1, stroke=0)
+              pdf.setStrokeColor(colors.black)
+              pdf.setLineWidth(0.7)
+              for x in xs:
+                  pdf.line(x, table_bottom, x, table_top)
+              pdf.line(margin, table_top, page_width - margin, table_top)
+              pdf.line(margin, table_top - header_height, page_width - margin, table_top - header_height)
+              for index in range(len(page_controls)):
+                  y = table_top - header_height - (index + 1) * row_height
+                  pdf.line(margin, y, page_width - margin, y)
 
-          table.setStyle(TableStyle([
-              ("GRID", (0, 0), (-1, -1), 0.8, colors.black),
-              ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-              ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-              ("ALIGN", (0, 0), (0, -1), "CENTER"),
-              ("LEFTPADDING", (0, 0), (-1, -1), 5),
-              ("RIGHTPADDING", (0, 0), (-1, -1), 5),
-              ("TOPPADDING", (0, 0), (-1, -1), 5),
-              ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
-          ]))
+              pdf.setFillColor(colors.black)
+              pdf.setFont("Helvetica-Bold", 8)
+              for index, heading in enumerate(headings):
+                  center = xs[index] + column_widths[index] / 2
+                  pdf.drawCentredString(center, table_top - 19, heading)
 
-          document = SimpleDocTemplate(
-              filename,
-              pagesize=landscape(A4),
-              leftMargin=12 * mm,
-              rightMargin=12 * mm,
-              topMargin=12 * mm,
-              bottomMargin=12 * mm,
-              title="Modulo di verifica delle modifiche",
-          )
+              for index, (number, control, implementation, description) in enumerate(page_controls):
+                  row_top = table_top - header_height - index * row_height
+                  row_bottom = row_top - row_height
+                  pdf.setFont("Helvetica", 8)
+                  pdf.drawCentredString(xs[0] + column_widths[0] / 2, row_bottom + row_height / 2 - 3, number)
+                  pdf.drawString(xs[1] + 6, row_bottom + row_height / 2 - 3, control)
 
-          document.build([
-              Paragraph("MODULO DI VERIFICA DELLE MODIFICHE", title_style),
-              Spacer(1, 5 * mm),
-              table,
-          ])
+                  form.textfield(
+                      name=f"implementazione_{number.replace('.', '_')}",
+                      tooltip=f"Implementazione controllo {number}",
+                      x=xs[2] + 4,
+                      y=row_bottom + 5,
+                      width=column_widths[2] - 8,
+                      height=row_height - 10,
+                      value=implementation,
+                      fontName="Helvetica",
+                      fontSize=9,
+                      borderWidth=0.6,
+                      borderColor=colors.HexColor("#9ca3af"),
+                      fillColor=colors.white,
+                      textColor=colors.black,
+                      forceBorder=True,
+                  )
+                  form.textfield(
+                      name=f"descrizione_{number.replace('.', '_')}",
+                      tooltip=f"Descrizione controllo {number}",
+                      x=xs[3] + 4,
+                      y=row_bottom + 5,
+                      width=column_widths[3] - 8,
+                      height=row_height - 10,
+                      value=description,
+                      fontName="Helvetica",
+                      fontSize=8,
+                      fieldFlags="multiline",
+                      borderWidth=0.6,
+                      borderColor=colors.HexColor("#9ca3af"),
+                      fillColor=colors.white,
+                      textColor=colors.black,
+                      forceBorder=True,
+                  )
 
-          print(f"PDF generato: {filename}")
+              pdf.showPage()
+
+          for number, page_controls in enumerate(pages, start=1):
+              draw_page(number, page_controls)
+
+          pdf.save()
+          print(f"PDF compilabile generato: {filename}")
           PY
 
-      - name: Rendi disponibile il PDF da scaricare
+      - name: Carica il PDF come artifact
         uses: actions/upload-artifact@v4
         with:
-          name: modulo-verifica-modifiche
-          path: modulo-verifica-modifiche.pdf
+          name: modulo-verifica-controlli
+          path: modulo-verifica-controlli.pdf
           if-no-files-found: error

@@ -104,6 +104,7 @@ jobs:
               pdf.line(margin, table_top, page_width - margin, table_top)
               pdf.line(
                   margin,
-                  table_top - header_height,
-                  page_width -*
+                  table_top - header_heigt,
+                  table_width - margin,
+                  table_bottom,
               )

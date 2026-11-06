@@ -1,114 +1,58 @@
-# ISO 27001 Release PDF Generator
+# Generazione documentazione PDF per i rilasci
 
-![Python](https://Img.shields.io/badge/Phython-3.10-blue) 
-![GitHub Actions](https://img.shields.io/badge/GitHub-Action-green) 
-![ISO27001](https://img.shields.io/badge/ISO-27001-orange) 
+![Python 3.10](https://img.shields.io/badge/Python-3.10-blue)
+![GitHub Actions](https://img.shields.io/badge/GitHub-Actions-green)
+![Documentazione](https://img.shields.io/badge/Documentazione-PDF-orange)
 
-### Descrizione
-Questo progetto genera automaticamente un scheda di rilascio in formato PDF quando viene pubblicata una Release GitHub.
+Questo repository contiene workflow GitHub Actions per generare documentazione PDF a supporto del processo di rilascio software e della raccolta dei controlli di sicurezza.
 
-L'obbiettivo è supportare il processo di conformità ISO 27001 automatizzando la raccolta delle informazioni di rilascio e la generazione della documentazione associata.
-    
----
+I documenti sono strumenti di supporto alla documentazione: da soli non attestano né garantiscono la conformità a ISO 27001.
 
-## Funzionamento
+## Documenti generati
 
-Quando viene creata una nuova Release GitHub:
+### Scheda di rilascio
 
-1. Viene eseguita automaticamente una GitHub Action.
-2. La Action recupera le informazioni della Release.
-3. Viene generato un PDF tramite ReportLab.
-4. Il PDF viene allegato automaticamente alla release.
+Il workflow `Genera PDF Release Notes per ISO 27001` crea una scheda PDF con informazioni e sezioni relative al rilascio, tra cui progetto, analisi, sviluppo, test, validazione, rilascio in produzione e azioni correttive.
 
----
+**Generazione automatica:** quando una release GitHub viene pubblicata, il PDF viene creato e allegato alla release. Una copia viene inoltre caricata tra gli artifact dell'esecuzione.
 
-## Informazioni recuperate automaticamente
+**Generazione manuale:** dalla scheda **Actions**, selezionare il workflow e avviare **Run workflow**. È possibile indicare il tag, il nome e il testo della release. Il PDF generato sarà disponibile tra gli artifact dell'esecuzione.
 
-- Repository
-- Versione (Tag)
-- Nome Release
-- Data Release
+### Modulo di verifica dei controlli
 
----
+Il workflow `Genera modulo PDF compilabile dei controlli` crea un modulo PDF compilabile con i controlli numerati da 5.1 a 5.16. I campi di implementazione e descrizione possono essere compilati o modificati direttamente nel PDF.
 
-## Sezioni generate nel PDF
+Per generarlo, aprire **Actions**, selezionare il workflow e avviare **Run workflow**. Il file sarà disponibile come artifact con nome `modulo-verifica-controlli`.
 
-### Informazioni Progetto
+## Sezioni della scheda di rilascio
 
-- Titolo Progetto
-- Sviluppatore Assegnato
-- Data Inizio Sviluppo
-- Data Fine
+La scheda include:
 
-### Analisi delle Specifiche
+- Informazioni sul progetto e sul rilascio
+- Analisi delle specifiche
+- Attività di sviluppo
+- Test autonomi dello sviluppatore
+- Verifica con ICT Manager
+- Validazione e rilascio in produzione
+- Manutenzioni, aggiornamenti e azioni correttive
 
-- Data di Apertura
-- Data di Completamento
-- Note
+Alcuni valori e testi della scheda sono preimpostati nel workflow; per modificarli occorre aggiornare il relativo file di workflow.
 
-### Sviluppo 
+## Tecnologie
 
-- Branch
-- Data di Apertura
-- Data di Chiusura
+- GitHub Actions
+- Python 3.10
+- ReportLab
+- GitHub Releases e Actions artifacts
 
-### Test 
+## File principali
 
-- Bug Riscontrati
-- Esito Test
+- `.github/workflows/release-pdf.yml` — generazione e pubblicazione della scheda di rilascio.
+- `.github/workflows/modulo-verifica.yml` — generazione del modulo compilabile dei controlli.
 
-### Validazione
+## Recupero dei PDF
 
-- Approvazione del Rilascio
-- Note
+- **PDF della release:** aprire la release GitHub per trovare il file allegato; in alternativa, consultare gli artifact dell'esecuzione in **Actions**.
+- **Modulo dei controlli:** consultare gli artifact dell'esecuzione del workflow `Genera modulo PDF compilabile dei controlli`.
 
-### Rilascio in produzione
-
-- Responsabile del Merge
-- Data del Rilascio
-
-### Documento di Applicabilità dei Controlli
-
-Controlli del Secure Coding:
-
-- 5.1 Controllo del codice sorgente
-- 5.2 Gestione del repository
-- 5.3 Revisione del codice
-- 5.4 Gestione delle vulnerabilità
-- ...
-- 5.16 Output Validation
-
-  ...
-
-### Tecnologie Utilizzate
-
--GitHub Actions <br>
--Python 3.10 <br>
--ReportLab <br>
--GitHub Release <br>
-
----
-
-## Esempio workflow
-
-Release GitHub
-
-
-GitHub Action 
-
-
-Generazione PDF 
-
-
-Allegato automatico alla Release
-
-
----
-
-## Possibili Evoluzioni Future
-
--Recupero automatico delle informazioni dalla descrizione della Release <br>
--Inserimento del logo aziendale <br>
--Generazione automatica delle checklist di sicurezza <br>
--Integrazione con controlli ISO 27001 aggiuntivi <br>
-  
+Gli artifact sono associati alle rispettive esecuzioni GitHub Actions e sono soggetti alle impostazioni di conservazione configurate per il repository.

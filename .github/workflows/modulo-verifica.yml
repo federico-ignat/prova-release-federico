@@ -48,7 +48,7 @@ jobs:
               ("5.13", "Session Management", "NO", "Applicazione stateless, nessuna sessione utente"),
               ("5.14", "Strumenti di cifratura", "SI", ""),
               ("5.15", "Input Validation", "SI", "Validazione degli input implementari"),
-              ("5.16", "Input Validation", "SI", "Validazione degli output implementari"),
+              ("5.16", "Output Validation", "SI", "Validazione degli output implementari"),
           ]
 
           margin = 30
@@ -75,10 +75,7 @@ jobs:
                   )
                   table_top = page_height - 68
               else:
-                  # La seconda pagina non ripete titolo e sottotitolo.
                   table_top = page_height - 28
-
-              pdf.drawRightString(page_width - margin, 20, f"Pagina {page_number} di 2")
 
               table_bottom = table_top - header_height - len(page_controls) * row_height
               xs = [margin]
@@ -104,7 +101,104 @@ jobs:
               pdf.line(margin, table_top, page_width - margin, table_top)
               pdf.line(
                   margin,
-                  table_top - header_heigt,
-                  table_width - margin,
-                  table_bottom,
+                  table_top - header_height,
+                  page_width - margin,
+                  table_top - header_height,
               )
+              pdf.line(margin, table_bottom, page_width - margin, table_bottom)
+
+              pdf.setFont("Helvetica-Bold", 8)
+              for index, heading in enumerate(headings):
+                  pdf.drawCentredString(
+                      (xs[index] + xs[index + 1]) / 2,
+                      table_top - header_height / 2 - 3,
+                      heading,
+                  )
+
+              for row_index, (number, title, status, description) in enumerate(page_controls):
+                  row_top = table_top - header_height - row_index * row_height
+                  row_bottom = row_top - row_height
+                  pdf.line(margin, row_bottom, page_width - margin, row_bottom)
+
+                  pdf.setFont("Helvetica", 8)
+                  pdf.drawCentredString(
+                      (xs[0] + xs[1]) / 2,
+                      row_bottom + row_height / 2 - 3,
+                      number,
+                  )
+
+                  # Etichette lunghe vengono mandate a capo nello spazio della colonna.
+                  words = title.split()
+                  lines = []
+                  current_line = ""
+                  available_width = column_widths[1] - 12
+                  for word in words:
+                      candidate = f"{current_line} {word}".strip()
+                      if pdf.stringWidth(candidate, "Helvetica", 8) <= available_width:
+                          current_line = candidate
+                      else:
+                          if current_line:
+                              lines.append(current_line)
+                          current_line = word
+                  if current_line:
+                      lines.append(current_line)
+                  line_height = 10
+                  text_y = row_bottom + (row_height + (len(lines) - 1) * line_height) / 2 - 3
+                  for line in lines:
+                      pdf.drawString(xs[1] + 6, text_y, line)
+                      text_y -= line_height
+
+                  field_y = row_bottom + 9
+                  field_height = row_height - 18
+                  form.textfield(
+                      name=f"implementazione_{number.replace('.', '_')}",
+                      tooltip=f"Implementazione del controllo {number}",
+                      value=status,
+                      x=xs[2] + 5,
+                      y=field_y,
+                      width=column_widths[2] - 10,
+                      height=field_height,
+                      fontName="Helvetica",
+                      fontSize=8,
+                      textColor=colors.black,
+                      borderColor=colors.grey,
+                      fillColor=colors.white,
+                      borderWidth=0.6,
+                      forceBorder=True,
+                  )
+                  form.textfield(
+                      name=f"descrizione_{number.replace('.', '_')}",
+                      tooltip=f"Descrizione del controllo {number}",
+                      value=description,
+                      x=xs[3] + 5,
+                      y=field_y,
+                      width=column_widths[3] - 10,
+                      height=field_height,
+                      fontName="Helvetica",
+                      fontSize=8,
+                      textColor=colors.black,
+                      borderColor=colors.grey,
+                      fillColor=colors.white,
+                      borderWidth=0.6,
+                      fieldFlags="multiline",
+                      forceBorder=True,
+                  )
+
+              pdf.setFont("Helvetica", 8)
+              pdf.drawRightString(page_width - margin, 20, f"Pagina {page_number} di 2")
+
+          for page_number, page_controls in enumerate(pages, start=1):
+              draw_page(page_number, page_controls)
+              pdf.showPage()
+
+          pdf.save()
+          print(f"PDF creato: {filename}")
+          PY
+
+      - name: Carica il PDF come artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: modulo-verifica-controlli
+          path: modulo-verifica-controlli.pdf
+          if-no-files-found: error
+          retention-days: 7

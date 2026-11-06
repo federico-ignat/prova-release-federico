@@ -43,12 +43,12 @@ jobs:
               ("5.8", "Gestione della memoria", "SI", ""),
               ("5.9", "Type-Safe Practices", "SI", ""),
               ("5.10", "Locality", "SI", ""),
-              ("5.11", "Gestione degli errori", "SI", "Gestione delle eccezioni implementari"),
+              ("5.11", "Gestione degli errori", "SI", "Gestione delle eccezioni implementate"),
               ("5.12", "Interface Coding (API)", "SI", ""),
               ("5.13", "Session Management", "NO", "Applicazione stateless, nessuna sessione utente"),
               ("5.14", "Strumenti di cifratura", "SI", ""),
-              ("5.15", "Input Validation", "SI", "Validazione degli input implementari"),
-              ("5.16", "Output Validation", "SI", "Validazione degli output implementari"),
+              ("5.15", "Input Validation", "SI", "Validazione degli input implementata"),
+              ("5.16", "Output Validation", "SI", "Validazione degli output implementata"),
           ]
 
           margin = 30
@@ -60,6 +60,8 @@ jobs:
           pages = [controls[:8], controls[8:]]
 
           def draw_page(page_number, page_controls):
+              pdf.setFillColor(colors.black)
+
               if page_number == 1:
                   pdf.setFont("Helvetica-Bold", 15)
                   pdf.drawCentredString(
@@ -107,7 +109,10 @@ jobs:
               )
               pdf.line(margin, table_bottom, page_width - margin, table_bottom)
 
+              # Reimposta il colore dopo aver disegnato lo sfondo grigio.
+              pdf.setFillColor(colors.black)
               pdf.setFont("Helvetica-Bold", 8)
+
               for index, heading in enumerate(headings):
                   pdf.drawCentredString(
                       (xs[index] + xs[index + 1]) / 2,
@@ -120,6 +125,7 @@ jobs:
                   row_bottom = row_top - row_height
                   pdf.line(margin, row_bottom, page_width - margin, row_bottom)
 
+                  pdf.setFillColor(colors.black)
                   pdf.setFont("Helvetica", 8)
                   pdf.drawCentredString(
                       (xs[0] + xs[1]) / 2,
@@ -127,11 +133,11 @@ jobs:
                       number,
                   )
 
-                  # Etichette lunghe vengono mandate a capo nello spazio della colonna.
                   words = title.split()
                   lines = []
                   current_line = ""
                   available_width = column_widths[1] - 12
+
                   for word in words:
                       candidate = f"{current_line} {word}".strip()
                       if pdf.stringWidth(candidate, "Helvetica", 8) <= available_width:
@@ -140,16 +146,20 @@ jobs:
                           if current_line:
                               lines.append(current_line)
                           current_line = word
+
                   if current_line:
                       lines.append(current_line)
+
                   line_height = 10
                   text_y = row_bottom + (row_height + (len(lines) - 1) * line_height) / 2 - 3
+
                   for line in lines:
                       pdf.drawString(xs[1] + 6, text_y, line)
                       text_y -= line_height
 
                   field_y = row_bottom + 9
                   field_height = row_height - 18
+
                   form.textfield(
                       name=f"implementazione_{number.replace('.', '_')}",
                       tooltip=f"Implementazione del controllo {number}",
@@ -166,6 +176,7 @@ jobs:
                       borderWidth=0.6,
                       forceBorder=True,
                   )
+
                   form.textfield(
                       name=f"descrizione_{number.replace('.', '_')}",
                       tooltip=f"Descrizione del controllo {number}",
@@ -184,8 +195,13 @@ jobs:
                       forceBorder=True,
                   )
 
+              pdf.setFillColor(colors.black)
               pdf.setFont("Helvetica", 8)
-              pdf.drawRightString(page_width - margin, 20, f"Pagina {page_number} di 2")
+              pdf.drawRightString(
+                  page_width - margin,
+                  20,
+                  f"Pagina {page_number} di 2",
+              )
 
           for page_number, page_controls in enumerate(pages, start=1):
               draw_page(page_number, page_controls)

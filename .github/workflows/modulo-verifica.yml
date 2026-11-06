@@ -216,6 +216,5 @@ jobs:
         with:
           name: modulo-verifica-controlli
           path: modulo-verifica-controlli.pdf
-          path: pdf.test
           if-no-files-found: error
           retention-days: 7

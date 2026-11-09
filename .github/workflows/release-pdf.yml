@@ -216,7 +216,7 @@ jobs:
               ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
           ]))
 
-           story.append(Paragraph("7. Manutenzioni e aggiornamenti", heading_style))
+          story.append(Paragraph("7. Manutenzioni e aggiornamenti", heading_style))
  
           data_azioni = [
               ["Feedback ricevuti", "Azioni correttive", "Note"],
@@ -233,7 +233,7 @@ jobs:
               ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
           ]))
 
-           story.append(Paragraph("8. Azioni correttive(fase eventuale)", heading_style))
+          story.append(Paragraph("8. Azioni correttive(fase eventuale)", heading_style))
  
           data_azioni = [
               ["Descrizione azione", "Data di inizio e chiusura", "Responsabile dell'azione"],

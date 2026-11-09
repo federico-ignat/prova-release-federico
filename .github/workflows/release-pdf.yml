@@ -31,6 +31,7 @@ jobs:
           RELEASE_NAME: ${{ github.event.release.name }}
           RELEASE_BODY: ${{ github.event.release.body }}
           AUTHOR: ${{ github.event.release.author.login }}
+          RELEASE_DATE: ${{ github.event.release.published_at }}
         run: |
           python3 - <<'EOF'
           import os
@@ -214,3 +215,8 @@ jobs:
  
           story.append(t_azioni)
           story.append(Spacer(1,5))
+
+          doc.build(story)
+
+          print("PDF generato con successo.")
+          EOF

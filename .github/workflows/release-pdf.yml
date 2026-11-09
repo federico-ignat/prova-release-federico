@@ -73,7 +73,7 @@ jobs:
               canvas.drawRightString(
                  560,
                  15,
-                 f"Pagina {page_num}"
+                 f"N° {page_num}"
               
               )
  

@@ -41,6 +41,9 @@ jobs:
   generate-release-pdf:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Configura Python
         uses: actions/setup-python@v5
         with:
@@ -73,7 +76,14 @@ jobs:
           from reportlab.lib.pagesizes import A4
           from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
           from reportlab.lib.units import mm
-          from reportlab.platypus import KeepTogether, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+          from reportlab.platypus import (
+              KeepTogether,
+              Paragraph,
+              SimpleDocTemplate,
+              Spacer,
+              Table,
+              TableStyle,
+          )
 
           def env(name, default=""):
               return (os.environ.get(name) or default).strip()
@@ -170,7 +180,12 @@ jobs:
                       converted_row.append(paragraph(value, style))
                   converted.append(converted_row)
 
-              table = Table(converted, colWidths=widths, repeatRows=1 if header else 0, hAlign="LEFT")
+              table = Table(
+                  converted,
+                  colWidths=widths,
+                  repeatRows=1 if header else 0,
+                  hAlign="LEFT",
+              )
               table.setStyle(
                   TableStyle(
                       [
@@ -180,8 +195,23 @@ jobs:
                           ("RIGHTPADDING", (0, 0), (-1, -1), 6),
                           ("TOPPADDING", (0, 0), (-1, -1), 5),
                           ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
-                          ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#374151")) if header else ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#e5e7eb")),
-                          ("BACKGROUND", (0, 1), (-1, -1), colors.white) if header else ("BACKGROUND", (1, 0), (-1, -1), colors.white),
+                          (
+                              "BACKGROUND",
+                              (0, 0),
+                              (-1, 0),
+                              colors.HexColor("#374151"),
+                          ) if header else (
+                              "BACKGROUND",
+                              (0, 0),
+                              (0, -1),
+                              colors.HexColor("#e5e7eb"),
+                          ),
+                          ("BACKGROUND", (0, 1), (-1, -1), colors.white) if header else (
+                              "BACKGROUND",
+                              (1, 0),
+                              (-1, -1),
+                              colors.white,
+                          ),
                       ]
                   )
               )
@@ -190,6 +220,7 @@ jobs:
           usable_width = A4[0] - 36 * mm
           col3 = [usable_width * 0.23, usable_width * 0.23, usable_width * 0.54]
           col2 = [usable_width * 0.36, usable_width * 0.64]
+
           story = [
               paragraph("SCHEDA DI RILASCIO SOFTWARE", title_style),
               paragraph("INFORMAZIONI PROGETTO", heading_style),
@@ -222,7 +253,11 @@ jobs:
               (
                   "3. Test autonomi dello sviluppatore",
                   ["Data apertura", "Data completamento", "Verifiche"],
-                  [start_date, release_day, "Verificare il PDF generato e i dettagli del rilascio."],
+                  [
+                      start_date,
+                      release_day,
+                      "Verificare il PDF generato e i dettagli del rilascio.",
+                  ],
               ),
               (
                   "4. Test con ICT Manager",
@@ -252,24 +287,34 @@ jobs:
           ]
 
           for heading, headers, values in sections:
-              story.append(KeepTogether([
-                  paragraph(heading, heading_style),
-                  make_table([headers, values], col3),
-                  Spacer(1, 7),
-              ]))
+              story.append(
+                  KeepTogether(
+                      [
+                          paragraph(heading, heading_style),
+                          make_table([headers, values], col3),
+                          Spacer(1, 7),
+                      ]
+                  )
+              )
 
           if body:
-              story.extend([
-                  paragraph("NOTE DI RILASCIO", heading_style),
-                  paragraph(body, cell_style),
-              ])
+              story.extend(
+                  [
+                      paragraph("NOTE DI RILASCIO", heading_style),
+                      paragraph(body, cell_style),
+                  ]
+              )
 
           def add_page_number(canvas, document):
               canvas.saveState()
               canvas.setFont("Helvetica", 8)
               canvas.setFillColor(colors.HexColor("#6b7280"))
               canvas.drawString(18 * mm, 10 * mm, "Scheda di Rilascio")
-              canvas.drawRightString(A4[0] - 18 * mm, 10 * mm, f"Pagina {document.page}")
+              canvas.drawRightString(
+                  A4[0] - 18 * mm,
+                  10 * mm,
+                  f"Pagina {document.page}",
+              )
               canvas.restoreState()
 
           doc.build(story, onFirstPage=add_page_number, onLaterPages=add_page_number)
@@ -281,4 +326,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ github.event.release.tag_name || inputs.tag || github.ref_name }}
         run: |
-          gh release upload "$TAG_NAME" "Scheda_Rilascio_$(printf '%s' "$TAG_NAME" | sed -E 's/[^A-Za-z0-9._-]+/-/g; s/^[.-]+|[.-]+$//g').pdf" --clobber
+          SAFE_TAG="$(printf '%s' "$TAG_NAME" | sed -E 's/[^A-Za-z0-9._-]+/-/g; s/^[.-]+|[.-]+$//g')"
+          PDF_FILENAME="Scheda_Rilascio_${SAFE_TAG}.pdf"
+
+          if [ ! -f "$PDF_FILENAME" ]; then
+            echo "::error::PDF non trovato: $PDF_FILENAME"
+            exit 1
+          fi
+
+          gh release upload "$TAG_NAME" "$PDF_FILENAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --clobber

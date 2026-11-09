@@ -125,7 +125,7 @@ jobs:
  
           data_sviluppo = [
               ["Data di apertura", "Data di completamento", "Branch"],
-              ["30/10/2026", release_date[:10], tag]
+              ["2026/10/30", release_date[:10], tag]
               ]
  
           t_sviluppo = Table(data_sviluppo, colWidths=[120, 120, 260])
@@ -142,7 +142,7 @@ jobs:
  
           data_test = [
               ["Data di apertura", "Data di completamento", "Bug riscontrati"],
-              ["30/10/2026", release_date[:10], 
+              ["2026/10/30", release_date[:10], 
               "- L'action non riusciva ad allegare Il PDF \n alla release \n" 
               "- Errori di sintassi YAML\n"
               "- Problemi di impaginazione del PDF"]
@@ -162,7 +162,7 @@ jobs:
  
           data_validazione = [
               ["Data di apertura", "Data di completamento", "Esito Test"],
-              ["30/10/2026", release_date[:10], "Completato con esito positivo"]
+              ["2026/10/30", release_date[:10], "Completato con esito positivo"]
           ]
  
           t_validazione = Table(
@@ -182,7 +182,7 @@ jobs:
  
           data_rilascio = [
               ["Data di validazione", "Approvato da", "Note"],
-              ["30/10/2026", "Marco Favagrossa", ""]
+              ["2026/10/30", "Marco Favagrossa", ""]
           ]
  
           t_rilascio = Table(
@@ -205,7 +205,7 @@ jobs:
  
           data_azioni = [
               ["Data di Rilascio", "Responsabile Merge", "Note"],
-              ["30/10/2026", "Federico Ignat", ""]
+              ["2026/10/30", "Federico Ignat", ""]
           ]
  
           t_azioni = Table(

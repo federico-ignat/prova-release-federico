@@ -221,7 +221,7 @@ jobs:
 
           doc.build(story)
 
-                    print("PDF generato con successo.")
+          print("PDF generato con successo.")
           EOF
 
       - name: Allega il PDF alla Release esistente

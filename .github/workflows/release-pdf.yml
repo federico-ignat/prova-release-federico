@@ -198,6 +198,8 @@ jobs:
  
           story.append(t_rilascio)
           story.append(Spacer(1, 15))
+
+          story.append(PageBreak())
  
           story.append(Paragraph("6. Rilascio in produzione", heading_style))
  

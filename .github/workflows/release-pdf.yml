@@ -126,7 +126,7 @@ jobs:
  
           data_analisi = [
               ["Data Apertura", "Data Completamento", "Note"],
-              ["2026-10-30", release_date[:10], "Analisi requisiti completata"]
+              ["2026-10-30", release_date[:10], "Analizzati i requisiti per la generazione automatica della documentazione di rilascio tramite GitHub Actions e ReportLab."]
           ]
  
           t_analisi = Table(data_analisi, colWidths=[120, 120, 260])

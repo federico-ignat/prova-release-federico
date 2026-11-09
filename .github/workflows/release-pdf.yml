@@ -67,7 +67,7 @@ jobs:
               canvas.drawString(
                  40,
                  15,
-                 "Scheda di Rilascio"
+                 "Avanzamento - Rilascio PDF Software"
               )
 
               canvas.drawRightString(

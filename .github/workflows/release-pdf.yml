@@ -215,6 +215,40 @@ jobs:
               ('GRID', (0,0), (-1,-1), 1, colors.black),
               ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
           ]))
+
+           story.append(Paragraph("7. Manutenzioni e aggiornamenti", heading_style))
+ 
+          data_azioni = [
+              ["Feedback ricevuti", "Azioni correttive", "Note"],
+              ["Esito positivo", "", ""]
+          ]
+ 
+          t_azioni = Table(
+              data_azioni,
+              colWidths=[120, 120, 260]
+          )
+ 
+          t_azioni.setStyle(TableStyle([
+              ('GRID', (0,0), (-1,-1), 1, colors.black),
+              ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+          ]))
+
+           story.append(Paragraph("8. Azioni correttive(fase eventuale)", heading_style))
+ 
+          data_azioni = [
+              ["Descrizione azione", "Data di inizio e chiusura", "Responsabile dell'azione"],
+              ["", "", ""]
+          ]
+ 
+          t_azioni = Table(
+              data_azioni,
+              colWidths=[120, 120, 260]
+          )
+ 
+          t_azioni.setStyle(TableStyle([
+              ('GRID', (0,0), (-1,-1), 1, colors.black),
+              ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+          ]))
  
           story.append(t_azioni)
           story.append(Spacer(1,5))

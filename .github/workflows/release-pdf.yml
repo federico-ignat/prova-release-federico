@@ -17,27 +17,23 @@ on:
         description: "Testo della release"
         required: false
         default: ""
-        
-      star_date:
-        description: "Data di inizio delle attività(YYYY-MM-DD)"
+      start_date:
+        description: "Data di inizio delle attività (YYYY-MM-DD)"
         required: false
         default: ""
-
       validation_date:
-        description: "Data di validazione(YYYY-MM-DD)"
+        description: "Data di validazione (YYYY-MM-DD)"
         required: false
         default: ""
-
       approved_by:
         description: "Persona che approva il rilascio"
         required: false
         default: ""
-
-      merge_responsabile:
+      merge_responsible:
         description: "Responsabile del merge"
         required: false
         default: ""
-        
+
 jobs:
   build-pdf:
     runs-on: ubuntu-latest
@@ -60,10 +56,6 @@ jobs:
 
       - name: Genera il documento PDF di rilascio
         env:
-          STAR_DATE: ${{ github.event.inputs.star_date || '' }}
-          VALIDATION_DATE: ${{ github.event.inputs.validation_date || '' }}
-          APPROVED_BY: ${{ github.event.inputs.approved_by || '' }}
-          MERGE_RESPONSABILE: ${{ github.event.inputs.merge_responsabile || '' }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           TAG_NAME: ${{ github.event.release.tag_name || github.event.inputs.tag || github.ref_name }}
@@ -71,6 +63,10 @@ jobs:
           RELEASE_BODY: ${{ github.event.release.body || github.event.inputs.body || 'Nessuna nota inserita.' }}
           AUTHOR: ${{ github.event.release.author.login || github.actor }}
           RELEASE_DATE: ${{ github.event.release.published_at || github.event.repository.updated_at || github.run_started_at }}
+          START_DATE: ${{ github.event.inputs.start_date || '' }}
+          VALIDATION_DATE: ${{ github.event.inputs.validation_date || '' }}
+          APPROVED_BY: ${{ github.event.inputs.approved_by || '' }}
+          MERGE_RESPONSIBLE: ${{ github.event.inputs.merge_responsible || '' }}
         run: |
           python3 - <<'EOF'
           import os
@@ -88,22 +84,24 @@ jobs:
               TableStyle,
           )
 
+          def safe_text(value):
+              if value is None:
+                  return ""
+              value = str(value)
+              return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
           repo = os.environ.get("REPOSITORY", "unknown/repository")
-          tag = (os.environ.get("TAG_NAME", "").strip() or "release"
-          name = (os.environ.get("RELEASE_NAME", "").strip() or tag
-          body = (os.environ.get("RELEASE_BODY", "").strip() or "Nessuna nota inserita."
-          author = (os.environ.get("AUTHOR", "Sviluppatore").strip() or "Sviluppatore"
-          release_date = (os.environ.get("RELEASE_DATE", "").strip() or datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-          star_date = (os.environ.get("START_dATE", "").strip() or "Da compilare"
-          validation_date = (
-              os.environ.get("VALIDATION_DATE", "").strip()
-              or (release_date[:10] if len(release_date) >= 10 else "Da compilare")
+          tag = (os.environ.get("TAG_NAME") or "").strip() or "release"
+          name = (os.environ.get("RELEASE_NAME") or "").strip() or tag
+          body = (os.environ.get("RELEASE_BODY") or "").strip() or "Nessuna nota inserita."
+          author = (os.environ.get("AUTHOR") or "Sviluppatore").strip() or "Sviluppatore"
+          release_date = (os.environ.get("RELEASE_DATE") or "").strip() or datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+          start_date = os.environ.get("START_DATE", "").strip() or "Da compilare"
+          validation_date = os.environ.get("VALIDATION_DATE", "").strip() or (
+              release_date[:10] if len(release_date) >= 10 else "Da compilare"
           )
           approved_by = os.environ.get("APPROVED_BY", "").strip() or "Da compilare"
-          merge_responsabile = (
-              os.environ.get("MERGE_RESPONSABILE", "").strip() or "Da compilare"
-          )
-          
+          merge_responsible = os.environ.get("MERGE_RESPONSIBLE", "").strip() or "Da compilare"
 
           safe_tag = tag.replace("/", "-")
           pdf_filename = f"Scheda_Rilascio_{safe_tag}.pdf"
@@ -157,11 +155,11 @@ jobs:
           story.append(Paragraph("INFORMAZIONI PROGETTO", heading_style))
 
           data_progetto = [
-              ["Titolo Progetto", name],
-              ["Repository", repo],
-              ["Sviluppatore Assegnato", merge_responsabile],
-              ["Data inizio sviluppo", "validation_date"],
-              ["Data di fine", release_date[:10] if len(release_date) >= 10 else release_date],
+              ["Titolo Progetto", safe_text(name)],
+              ["Repository", safe_text(repo)],
+              ["Sviluppatore Assegnato", safe_text(author)],
+              ["Data inizio sviluppo", safe_text(start_date)],
+              ["Data di fine", safe_text(release_date[:10] if len(release_date) >= 10 else release_date)],
           ]
 
           t_progetto = Table(data_progetto, colWidths=[180, 320])
@@ -180,7 +178,7 @@ jobs:
           story.append(Paragraph("1. Analisi delle specifiche", heading_style))
           data_analisi = [
               ["Data Apertura", "Data Chiusura", "Note"],
-              ["validation_date", release_date[:10] if len(release_date) >= 10 else release_date, "Analisi requisiti completata"],
+              [safe_text(start_date), safe_text(release_date[:10] if len(release_date) >= 10 else release_date), "Analisi requisiti completata"],
           ]
 
           t_analisi = Table(data_analisi, colWidths=[120, 120, 260])
@@ -199,7 +197,7 @@ jobs:
           story.append(Paragraph("2. Sviluppo", heading_style))
           data_sviluppo = [
               ["Data di apertura", "Data di completamento", "Branch"],
-              ["validation_date", release_date[:10] if len(release_date) >= 10 else release_date, tag],
+              [safe_text(start_date), safe_text(release_date[:10] if len(release_date) >= 10 else release_date), safe_text(tag)],
           ]
 
           t_sviluppo = Table(data_sviluppo, colWidths=[120, 120, 260])
@@ -215,15 +213,17 @@ jobs:
           story.append(t_sviluppo)
           story.append(Spacer(1, 15))
 
-          story.append(Paragraph("3. Test autonomi dello sviluppiero", heading_style))
+          story.append(Paragraph("3. Test autonomi dello sviluppatore", heading_style))
           data_test = [
               ["Data di apertura", "Data di completamento", "Bug riscontrati"],
               [
-                  "validation_date",
-                  release_date[:10] if len(release_date) >= 10 else release_date,
-                  "- L'action non riusciva ad allegare il PDF \n"
-                  "- Errori di sintassi YAML\n"
-                  "- Problemi di impaginazione del PDF",
+                  safe_text(start_date),
+                  safe_text(release_date[:10] if len(release_date) >= 10 else release_date),
+                  safe_text(
+                      "- L'action non riusciva ad allegare il PDF \n"
+                      "- Errori di sintassi YAML\n"
+                      "- Problemi di impaginazione del PDF"
+                  ),
               ],
           ]
 
@@ -244,7 +244,7 @@ jobs:
           story.append(Paragraph("4. Test affiancamento con ICT Manager", heading_style))
           data_validazione = [
               ["Data di apertura", "Data di completamento", "Esito Test"],
-              ["validation_date", release_date[:10] if len(release_date) >= 10 else release_date, "Completato con esito positivo"],
+              [safe_text(start_date), safe_text(validation_date), "Completato con esito positivo"],
           ]
 
           t_validazione = Table(data_validazione, colWidths=[120, 120, 260])
@@ -263,7 +263,7 @@ jobs:
           story.append(Paragraph("5. Validazione per il rilascio", heading_style))
           data_rilascio = [
               ["Data di validazione", "Approvato da", "Note"],
-              ["validation_date", "approved_by", body[:200] if body else ""],
+              [safe_text(validation_date), safe_text(approved_by), safe_text(body[:200] if body else "")],
           ]
 
           t_rilascio = Table(data_rilascio, colWidths=[120, 120, 260])
@@ -283,7 +283,7 @@ jobs:
           story.append(Paragraph("6. Rilascio in produzione", heading_style))
           data_azioni = [
               ["Data di Rilascio", "Responsabile Merge", "Note"],
-              ["validation_date", "merge_responsabile", body[:200] if body else ""],
+              [safe_text(release_date[:10] if len(release_date) >= 10 else release_date), safe_text(merge_responsible), safe_text(body[:200] if body else "")],
           ]
 
           t_azioni = Table(data_azioni, colWidths=[120, 120, 260])
@@ -319,11 +319,11 @@ jobs:
           story.append(Spacer(1, 15))
 
           story.append(PageBreak())
-          story.append(Paragraph("8. Azioni corretive", heading_style))
+          story.append(Paragraph("8. Azioni correttive", heading_style))
 
           data_azioni = [
               ["Descrizione azione", "Data inizio e chiusura", "Responsabile dell'azione"],
-              [body[:200] if body else "", "", ""],
+              [safe_text(body[:200] if body else ""), "", ""],
           ]
 
           t_azioni = Table(data_azioni, colWidths=[120, 120, 260])
@@ -341,7 +341,7 @@ jobs:
 
           if body and body.strip():
               story.append(Paragraph("NOTE DI RILASCIO", heading_style))
-              story.append(Paragraph(body, body_style))
+              story.append(Paragraph(safe_text(body), body_style))
               story.append(Spacer(1, 15))
 
           doc.build(story, onFirstPage=add_page_number, onLaterPages=add_page_number)
@@ -542,10 +542,6 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-
-          files = [
-              Path("Scheda_Rilascio_*.pdf"),  # placeholder, non usato
-          ]
 
           pdfs = sorted(Path(".").glob("Scheda_Rilascio_*.pdf"))
           pdfs.append(Path("modulo-verifica-controlli.pdf"))

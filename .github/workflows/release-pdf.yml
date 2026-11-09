@@ -1,292 +1,284 @@
+name: Genera PDF di rilascio
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag del release esistente a cui allegare il PDF
+        required: true
+        type: string
+      release_name:
+        description: Titolo del release
+        required: false
+        type: string
+      body:
+        description: Note di rilascio
+        required: false
+        type: string
+      start_date:
+        description: Data di inizio sviluppo (YYYY-MM-DD)
+        required: false
+        type: string
+      validation_date:
+        description: Data di validazione (YYYY-MM-DD)
+        required: false
+        type: string
+      approved_by:
+        description: Approvato da
+        required: false
+        type: string
+      merge_responsible:
+        description: Responsabile del merge
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  generate-release-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configura Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Installa ReportLab
+        run: python3 -m pip install --quiet reportlab
+
       - name: Genera il documento PDF di rilascio
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPOSITORY: ${{ github.repository }}
-          TAG_NAME: ${{ github.event.release.tag_name || github.event.inputs.tag || github.ref_name }}
-          RELEASE_NAME: ${{ github.event.release.name || github.event.inputs.release_name || github.event.inputs.tag || github.ref_name }}
-          RELEASE_BODY: ${{ github.event.release.body || github.event.inputs.body || 'Nessuna nota inserita.' }}
+          TAG_NAME: ${{ github.event.release.tag_name || inputs.tag || github.ref_name }}
+          RELEASE_NAME: ${{ github.event.release.name || inputs.release_name || inputs.tag || github.ref_name }}
+          RELEASE_BODY: ${{ github.event.release.body || inputs.body || '' }}
           AUTHOR: ${{ github.event.release.author.login || github.actor }}
-          RELEASE_DATE: ${{ github.event.release.published_at || github.event.repository.updated_at || github.run_started_at }}
-          START_DATE: ${{ github.event.inputs.start_date || '' }}
-          VALIDATION_DATE: ${{ github.event.inputs.validation_date || '' }}
-          APPROVED_BY: ${{ github.event.inputs.approved_by || '' }}
-          MERGE_RESPONSIBLE: ${{ github.event.inputs.merge_responsible || '' }}
+          RELEASE_DATE: ${{ github.event.release.published_at || '' }}
+          START_DATE: ${{ inputs.start_date || '' }}
+          VALIDATION_DATE: ${{ inputs.validation_date || '' }}
+          APPROVED_BY: ${{ inputs.approved_by || '' }}
+          MERGE_RESPONSIBLE: ${{ inputs.merge_responsible || '' }}
         run: |
-          python3 - <<'EOF'
+          python3 - <<'PY'
+          import html
           import os
-          from datetime import datetime
+          import re
+          from datetime import datetime, timezone
 
           from reportlab.lib import colors
-          from reportlab.lib.pagesizes import letter
+          from reportlab.lib.enums import TA_LEFT
+          from reportlab.lib.pagesizes import A4
           from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-          from reportlab.platypus import (
-              Paragraph,
-              PageBreak,
-              SimpleDocTemplate,
-              Spacer,
-              Table,
-              TableStyle,
-          )
+          from reportlab.lib.units import mm
+          from reportlab.platypus import KeepTogether, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
-          def safe_text(value):
-              if value is None:
-                  return ""
-              value = str(value)
-              return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+          def env(name, default=""):
+              return (os.environ.get(name) or default).strip()
 
-          repo = os.environ.get("REPOSITORY", "unknown/repository")
-          tag = (os.environ.get("TAG_NAME") or "").strip() or "release"
-          name = (os.environ.get("RELEASE_NAME") or "").strip() or tag
-          body = (os.environ.get("RELEASE_BODY") or "").strip() or "Nessuna nota inserita."
-          author = (os.environ.get("AUTHOR") or "Sviluppatore").strip() or "Sviluppatore"
-          release_date = (os.environ.get("RELEASE_DATE") or "").strip() or datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+          def date_only(value, fallback):
+              value = (value or "").strip()
+              return value[:10] if len(value) >= 10 else (value or fallback)
 
-          # IMPORTANTE: se non arriva una data, usa una data reale e non "Da compilare"
-          start_date = os.environ.get("START_DATE", "").strip() or release_date[:10] if len(release_date) >= 10 else datetime.utcnow().strftime("%Y-%m-%d")
-          validation_date = os.environ.get("VALIDATION_DATE", "").strip() or (
-              release_date[:10] if len(release_date) >= 10 else datetime.utcnow().strftime("%Y-%m-%d")
-          )
-          approved_by = os.environ.get("APPROVED_BY", "").strip() or "Da compilare"
-          merge_responsible = os.environ.get("MERGE_RESPONSIBLE", "").strip() or "Da compilare"
+          def paragraph(value, style):
+              text = html.escape(str(value or "")).replace("\n", "<br/>")
+              return Paragraph(text or "&nbsp;", style)
 
-          safe_tag = tag.replace("/", "-")
+          now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+          repo = env("REPOSITORY", "unknown/repository")
+          tag = env("TAG_NAME", "release")
+          name = env("RELEASE_NAME", tag) or tag
+          body = env("RELEASE_BODY", "Nessuna nota inserita.") or "Nessuna nota inserita."
+          author = env("AUTHOR", "Sviluppatore") or "Sviluppatore"
+          release_date = env("RELEASE_DATE", now) or now
+          release_day = date_only(release_date, now[:10])
+          start_date = date_only(env("START_DATE"), release_day)
+          validation_date = date_only(env("VALIDATION_DATE"), release_day)
+          approved_by = env("APPROVED_BY", "Da compilare") or "Da compilare"
+          merge_responsible = env("MERGE_RESPONSIBLE", "Da compilare") or "Da compilare"
+
+          safe_tag = re.sub(r"[^A-Za-z0-9._-]+", "-", tag).strip(".-") or "release"
           pdf_filename = f"Scheda_Rilascio_{safe_tag}.pdf"
 
           doc = SimpleDocTemplate(
               pdf_filename,
-              pagesize=letter,
-              rightMargin=36,
-              leftMargin=36,
-              topMargin=36,
-              bottomMargin=36,
+              pagesize=A4,
+              rightMargin=18 * mm,
+              leftMargin=18 * mm,
+              topMargin=18 * mm,
+              bottomMargin=20 * mm,
+              title=f"Scheda di rilascio - {name}",
+              author=author,
           )
 
-          def add_page_number(canvas, doc):
-              page_num = canvas.getPageNumber()
-              canvas.setFont("Helvetica", 8)
-              canvas.drawString(40, 15, "Scheda di Rilascio")
-              canvas.drawRightString(560, 15, f"Pagina {page_num}")
-
-          story = []
           styles = getSampleStyleSheet()
           title_style = ParagraphStyle(
-              "TitleStyle",
-              parent=styles["Normal"],
+              "ReleaseTitle",
+              parent=styles["Title"],
               fontName="Helvetica-Bold",
-              fontSize=18,
+              fontSize=17,
+              leading=21,
               textColor=colors.HexColor("#1f2937"),
-              spaceAfter=12,
+              alignment=TA_LEFT,
+              spaceAfter=8,
           )
           heading_style = ParagraphStyle(
-              "HeadingStyle",
-              parent=styles["Normal"],
-              fontName="Helvetica",
+              "SectionHeading",
+              parent=styles["Heading2"],
+              fontName="Helvetica-Bold",
               fontSize=10,
+              leading=13,
               textColor=colors.HexColor("#374151"),
+              spaceBefore=5,
               spaceAfter=6,
+              keepWithNext=True,
           )
-          body_style = ParagraphStyle(
-              "BodyStyle",
-              parent=styles["Normal"],
-              fontSize=10,
-              textColor=colors.HexColor("#374151"),
-              spaceAfter=2,
+          cell_style = ParagraphStyle(
+              "Cell",
+              parent=styles["BodyText"],
+              fontName="Helvetica",
+              fontSize=8,
+              leading=10,
+              textColor=colors.HexColor("#1f2937"),
+              spaceAfter=0,
+          )
+          header_cell_style = ParagraphStyle(
+              "HeaderCell",
+              parent=cell_style,
+              fontName="Helvetica-Bold",
+              textColor=colors.white,
+          )
+          label_style = ParagraphStyle(
+              "LabelCell",
+              parent=cell_style,
+              fontName="Helvetica-Bold",
           )
 
-          story.append(Paragraph("SCHEDA DI RILASCIO SOFTWARE", title_style))
-          story.append(Spacer(1, 10))
-          story.append(Paragraph("INFORMAZIONI PROGETTO", heading_style))
+          def make_table(rows, widths, header=True, first_column_label=False):
+              converted = []
+              for row_index, row in enumerate(rows):
+                  converted_row = []
+                  for col_index, value in enumerate(row):
+                      if header and row_index == 0:
+                          style = header_cell_style
+                      elif first_column_label and col_index == 0:
+                          style = label_style
+                      else:
+                          style = cell_style
+                      converted_row.append(paragraph(value, style))
+                  converted.append(converted_row)
 
-          data_progetto = [
-              ["Titolo Progetto", safe_text(name)],
-              ["Repository", safe_text(repo)],
-              ["Sviluppatore Assegnato", safe_text(author)],
-              ["Data inizio sviluppo", safe_text(start_date)],
-              ["Data di fine", safe_text(release_date[:10] if len(release_date) >= 10 else release_date)],
+              table = Table(converted, colWidths=widths, repeatRows=1 if header else 0, hAlign="LEFT")
+              table.setStyle(
+                  TableStyle(
+                      [
+                          ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#9ca3af")),
+                          ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                          ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                          ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                          ("TOPPADDING", (0, 0), (-1, -1), 5),
+                          ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+                          ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#374151")) if header else ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#e5e7eb")),
+                          ("BACKGROUND", (0, 1), (-1, -1), colors.white) if header else ("BACKGROUND", (1, 0), (-1, -1), colors.white),
+                      ]
+                  )
+              )
+              return table
+
+          usable_width = A4[0] - 36 * mm
+          col3 = [usable_width * 0.23, usable_width * 0.23, usable_width * 0.54]
+          col2 = [usable_width * 0.36, usable_width * 0.64]
+          story = [
+              paragraph("SCHEDA DI RILASCIO SOFTWARE", title_style),
+              paragraph("INFORMAZIONI PROGETTO", heading_style),
+              make_table(
+                  [
+                      ["Titolo progetto", name],
+                      ["Repository", repo],
+                      ["Sviluppatore assegnato", author],
+                      ["Data inizio sviluppo", start_date],
+                      ["Data di rilascio", release_day],
+                  ],
+                  col2,
+                  header=False,
+                  first_column_label=True,
+              ),
+              Spacer(1, 8),
           ]
 
-          t_progetto = Table(data_progetto, colWidths=[180, 320])
-          t_progetto.setStyle(
-              TableStyle(
-                  [
-                      ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                      ("BACKGROUND", (0, 0), (0, -1), colors.lightgrey),
-                  ]
-              )
-          )
-
-          story.append(t_progetto)
-          story.append(Spacer(1, 15))
-
-          story.append(Paragraph("1. Analisi delle specifiche", heading_style))
-          data_analisi = [
-              ["Data Apertura", "Data Chiusura", "Note"],
-              [safe_text(start_date), safe_text(release_date[:10] if len(release_date) >= 10 else release_date), "Analisi requisiti completata"],
+          sections = [
+              (
+                  "1. Analisi delle specifiche",
+                  ["Data apertura", "Data chiusura", "Note"],
+                  [start_date, release_day, "Analisi requisiti completata"],
+              ),
+              (
+                  "2. Sviluppo",
+                  ["Data apertura", "Data completamento", "Tag release"],
+                  [start_date, release_day, tag],
+              ),
+              (
+                  "3. Test autonomi dello sviluppatore",
+                  ["Data apertura", "Data completamento", "Verifiche"],
+                  [start_date, release_day, "Verificare il PDF generato e i dettagli del rilascio."],
+              ),
+              (
+                  "4. Test con ICT Manager",
+                  ["Data apertura", "Data completamento", "Esito test"],
+                  [start_date, validation_date, "Completato con esito positivo"],
+              ),
+              (
+                  "5. Validazione per il rilascio",
+                  ["Data validazione", "Approvato da", "Note"],
+                  [validation_date, approved_by, body[:500]],
+              ),
+              (
+                  "6. Rilascio in produzione",
+                  ["Data rilascio", "Responsabile merge", "Note"],
+                  [release_day, merge_responsible, body[:500]],
+              ),
+              (
+                  "7. Manutenzioni e aggiornamenti",
+                  ["Feedback ricevuti", "Azioni correttive", "Note"],
+                  ["Da raccogliere", "Da definire", ""],
+              ),
+              (
+                  "8. Azioni correttive",
+                  ["Descrizione azione", "Data inizio e chiusura", "Responsabile"],
+                  [body[:500], "", ""],
+              ),
           ]
 
-          t_analisi = Table(data_analisi, colWidths=[120, 120, 260])
-          t_analisi.setStyle(
-              TableStyle(
-                  [
-                      ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                      ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-                  ]
-              )
-          )
+          for heading, headers, values in sections:
+              story.append(KeepTogether([
+                  paragraph(heading, heading_style),
+                  make_table([headers, values], col3),
+                  Spacer(1, 7),
+              ]))
 
-          story.append(t_analisi)
-          story.append(Spacer(1, 15))
+          if body:
+              story.extend([
+                  paragraph("NOTE DI RILASCIO", heading_style),
+                  paragraph(body, cell_style),
+              ])
 
-          story.append(Paragraph("2. Sviluppo", heading_style))
-          data_sviluppo = [
-              ["Data di apertura", "Data di completamento", "Branch"],
-              [safe_text(start_date), safe_text(release_date[:10] if len(release_date) >= 10 else release_date), safe_text(tag)],
-          ]
-
-          t_sviluppo = Table(data_sviluppo, colWidths=[120, 120, 260])
-          t_sviluppo.setStyle(
-              TableStyle(
-                  [
-                      ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                      ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-                  ]
-              )
-          )
-
-          story.append(t_sviluppo)
-          story.append(Spacer(1, 15))
-
-          story.append(Paragraph("3. Test autonomi dello sviluppatore", heading_style))
-          data_test = [
-              ["Data di apertura", "Data di completamento", "Bug riscontrati"],
-              [
-                  safe_text(start_date),
-                  safe_text(release_date[:10] if len(release_date) >= 10 else release_date),
-                  safe_text(
-                      "- L'action non riusciva ad allegare il PDF\n"
-                      "- Errori di sintassi YAML\n"
-                      "- Problemi di impaginazione del PDF"
-                  ),
-              ],
-          ]
-
-          t_test = Table(data_test, colWidths=[120, 120, 260])
-          t_test.setStyle(
-              TableStyle(
-                  [
-                      ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                      ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-                      ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                  ]
-              )
-          )
-
-          story.append(t_test)
-          story.append(Spacer(1, 15))
-
-          story.append(Paragraph("4. Test affiancamento con ICT Manager", heading_style))
-          data_validazione = [
-              ["Data di apertura", "Data di completamento", "Esito Test"],
-              [safe_text(start_date), safe_text(validation_date), "Completato con esito positivo"],
-          ]
-
-          t_validazione = Table(data_validazione, colWidths=[120, 120, 260])
-          t_validazione.setStyle(
-              TableStyle(
-                  [
-                      ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                      ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-                  ]
-              )
-          )
-
-          story.append(t_validazione)
-          story.append(Spacer(1, 15))
-
-          story.append(Paragraph("5. Validazione per il rilascio", heading_style))
-          data_rilascio = [
-              ["Data di validazione", "Approvato da", "Note"],
-              [safe_text(validation_date), safe_text(approved_by), safe_text(body[:200] if body else "")],
-          ]
-
-          t_rilascio = Table(data_rilascio, colWidths=[120, 120, 260])
-          t_rilascio.setStyle(
-              TableStyle(
-                  [
-                      ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                      ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-                      ("BACKGROUND", (0, 1), (-1, 1), colors.white),
-                  ]
-              )
-          )
-
-          story.append(t_rilascio)
-          story.append(Spacer(1, 15))
-
-          story.append(Paragraph("6. Rilascio in produzione", heading_style))
-          data_azioni = [
-              ["Data di Rilascio", "Responsabile Merge", "Note"],
-              [safe_text(release_date[:10] if len(release_date) >= 10 else release_date), safe_text(merge_responsible), safe_text(body[:200] if body else "")],
-          ]
-
-          t_azioni = Table(data_azioni, colWidths=[120, 120, 260])
-          t_azioni.setStyle(
-              TableStyle(
-                  [
-                      ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                      ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-                  ]
-              )
-          )
-
-          story.append(t_azioni)
-          story.append(Spacer(1, 15))
-
-          story.append(Paragraph("7. Manutenzioni e aggiornamenti", heading_style))
-          data_aggiornamenti = [
-              ["Feedback ricevuti", "Azioni corretive", "Note"],
-              ["Esito positivo", "", ""],
-          ]
-
-          t_aggiornamenti = Table(data_aggiornamenti, colWidths=[120, 120, 260])
-          t_aggiornamenti.setStyle(
-              TableStyle(
-                  [
-                      ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                      ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-                  ]
-              )
-          )
-
-          story.append(t_aggiornamenti)
-          story.append(Spacer(1, 15))
-
-          story.append(PageBreak())
-          story.append(Paragraph("8. Azioni correttive", heading_style))
-
-          data_azioni = [
-              ["Descrizione azione", "Data inizio e chiusura", "Responsabile dell'azione"],
-              [safe_text(body[:200] if body else ""), "", ""],
-          ]
-
-          t_azioni = Table(data_azioni, colWidths=[120, 120, 260])
-          t_azioni.setStyle(
-              TableStyle(
-                  [
-                      ("GRID", (0, 0), (-1, -1), 1, colors.black),
-                      ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-                  ]
-              )
-          )
-
-          story.append(t_azioni)
-          story.append(Spacer(1, 15))
-
-          if body and body.strip():
-              story.append(Paragraph("NOTE DI RILASCIO", heading_style))
-              story.append(Paragraph(safe_text(body), body_style))
-              story.append(Spacer(1, 15))
+          def add_page_number(canvas, document):
+              canvas.saveState()
+              canvas.setFont("Helvetica", 8)
+              canvas.setFillColor(colors.HexColor("#6b7280"))
+              canvas.drawString(18 * mm, 10 * mm, "Scheda di Rilascio")
+              canvas.drawRightString(A4[0] - 18 * mm, 10 * mm, f"Pagina {document.page}")
+              canvas.restoreState()
 
           doc.build(story, onFirstPage=add_page_number, onLaterPages=add_page_number)
           print(f"PDF generato con successo: {pdf_filename}")
-          EOF
+          PY
+
+      - name: Allega il PDF al release GitHub
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ github.event.release.tag_name || inputs.tag || github.ref_name }}
+        run: |
+          gh release upload "$TAG_NAME" "Scheda_Rilascio_$(printf '%s' "$TAG_NAME" | sed -E 's/[^A-Za-z0-9._-]+/-/g; s/^[.-]+|[.-]+$//g').pdf" --clobber

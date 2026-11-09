@@ -221,21 +221,20 @@ jobs:
 
           doc.build(story)
 
-          print("PDF generato con successo.")
+                    print("PDF generato con successo.")
+          EOF
 
-          EOF 
+      - name: Allega il PDF alla Release esistente
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Scheda_Rilascio_*.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          - name: Allega il PDF alla Release esistente
-          uses: softprops/action-gh-release@v2
-          with:
-           files: Scheda_Rilascio_*.pdf
-          env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-          - name: Carica PDF come Artifact
-           uses: actions/upload-artifact@v4
-            with:
-             name: pdf-test
-               path: Scheda_Rilascio_*.pdf
+      - name: Carica PDF come Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-test
+          path: Scheda_Rilascio_*.pdf
 
        

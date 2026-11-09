@@ -235,8 +235,6 @@ jobs:
           ]))
           story.append(t_azioni)
 
-          story.append(PageBreak())
-
           story.append(Paragraph("8. Azioni correttive(fase eventuale)", heading_style))
  
           data_azioni = [

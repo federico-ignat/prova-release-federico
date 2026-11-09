@@ -58,6 +58,24 @@ jobs:
                                   topMargin=36, bottomMargin=36)
           story = []
           styles = getSampleStyleSheet()
+
+          def add_page_number(canvas, doc):
+              page_num = canvas.getPageNumber()
+
+              canvas.setFont("Helvetica", 8)
+
+              canvas.drawString(
+                 40,
+                 15,
+                 "Scheda di Rilascio"
+              )
+
+              canvas.drawRightString(
+                 560,
+                 15,
+                 f"Pagina {page_num}"
+              
+              )
  
           # Stili personalizzati
           title_style = ParagraphStyle(
@@ -258,7 +276,11 @@ jobs:
           story.append(t_azioni)
           story.append(Spacer(1,5))
 
-          doc.build(story)
+          doc.build(
+              story,
+              onFirstPage=add_page_number,
+              onLaterPages=add_page_number
+          )
 
           print("PDF generato con successo.")
           EOF

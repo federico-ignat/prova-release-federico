@@ -20,7 +20,7 @@ jobs:
           python-version: '3.10'
 
       - name: Allega il PDF alla Release esistente
-        uses: softprops/action-gh-relese@v2
+        uses: softprops/action-gh-release@v2
         with:
             files: Scheda_Rilascio_${{ github.event.release.tag_name }}.pdf
         env:

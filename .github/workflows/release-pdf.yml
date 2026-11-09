@@ -226,12 +226,17 @@ jobs:
 
           doc.build(story)
 
+                 run: |
+          python3 - <<'EOF'
+          ...
+          doc.build(story)
+
           print("PDF generato con successo.")
           EOF
-          
+
           - name: Allega il PDF alla Release esistente
-          uses: softprops/action-gh-release@v2
+           uses: softprops/action-gh-release@v2
            with:
-          files: Scheda_Rilascio_*.pdf
-           env:
+               files: Scheda_Rilascio_*.pdf
+          env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

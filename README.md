@@ -12,20 +12,27 @@ I documenti sono strumenti di supporto alla documentazione: da soli non garantis
 
 ### Scheda di rilascio
 
-Il workflow **“Genera PDF Release Notes per ISO 27001”** genera due PDF:
+Il workflow **"Genera PDF Release Notes per ISO 27001"** genera una scheda PDF che raccoglie le informazioni principali del rilascio, tra cui:
 
-- una scheda di rilascio con informazioni sul progetto, analisi, sviluppo, test, validazioni, rilascio e azioni correttive;
-- il modulo compilabile per la verifica dei controlli, numerati da 5.1 a 5.16.
+- informazioni sul progetto e sul rilascio;
+- analisi delle specifiche;
+- attività di sviluppo;
+- test autonomi dello sviluppatore;
+- verifica con ICT Manager;
+- validazione e rilascio in produzione;
+- manutenzioni, aggiornamenti e azioni correttive.
 
-**Generazione automatica:** quando viene pubblicata una release GitHub, entrambi i PDF vengono allegati alla release e caricati anche come artifact dell’esecuzione, con nome `pdf-test`.
+**Generazione automatica:** quando una release GitHub viene pubblicata, la scheda PDF viene creata e allegata alla release. Una copia viene inoltre caricata tra gli artifact dell'esecuzione.
 
-**Generazione manuale:** dalla scheda **Actions**, selezionare il workflow e avviare **Run workflow**. È possibile indicare il tag, il nome e il testo della release. Entrambi i PDF sono disponibili tra gli artifact dell’esecuzione.
+**Generazione manuale:** dalla scheda **Actions**, selezionare il workflow e avviare **Run workflow**. È possibile indicare il tag, il nome e il testo della release. Il PDF generato sarà disponibile tra gli artifact dell'esecuzione.
 
 ### Modulo di verifica dei controlli
 
-Il workflow **“Genera modulo PDF compilabile dei controlli”** genera autonomamente il modulo PDF compilabile con i controlli numerati da 5.1 a 5.16. I campi di implementazione e descrizione possono essere compilati o modificati direttamente nel PDF.
+Il workflow **"Genera modulo PDF compilabile dei controlli"** crea un modulo PDF compilabile con i controlli numerati da 5.1 a 5.16. I campi di implementazione e descrizione possono essere compilati o modificati direttamente nel PDF.
 
-Il modulo è disponibile come artifact con nome `modulo-verifica-controlli`. Lo stesso modulo viene generato anche dal workflow della scheda di rilascio.
+**Generazione automatica:** il modulo viene prodotto anche come parte del workflow di rilascio, insieme alla scheda di rilascio.
+
+**Generazione manuale:** aprire **Actions**, selezionare il workflow e avviare **Run workflow**. Il file sarà disponibile come artifact con nome **"modulo-verifica-controlli"**.
 
 ## Sezioni della scheda di rilascio
 
@@ -50,12 +57,23 @@ Alcuni valori e testi della scheda sono preimpostati nel workflow; per modificar
 
 ## File principali
 
-- `.github/workflows/release-pdf.yml` — generazione della scheda di rilascio e del modulo dei controlli; allega entrambi alla release pubblicata.
+- `.github/workflows/release-pdf.yml` — generazione e pubblicazione della scheda di rilascio e del modulo dei controlli.
 - `.github/workflows/modulo-verifica.yml` — generazione autonoma del modulo compilabile dei controlli.
 
 ## Recupero dei PDF
 
 - **PDF della release:** aprire la release GitHub per trovare i file allegati; in alternativa, consultare gli artifact dell'esecuzione in **Actions**.
-- **Modulo dei controlli generato autonomamente:** consultare gli artifact dell'esecuzione del workflow **“Genera modulo PDF compilabile dei controlli”**.
+- **Modulo dei controlli:** consultare gli artifact dell'esecuzione del workflow **"Genera modulo PDF compilabile dei controlli"**.
+- **PDF della release e modulo dei controlli generati dal workflow di rilascio:** controllare gli artifact dell'esecuzione del workflow **"Genera PDF Release Notes per ISO 27001"**.
 
 Gli artifact sono associati alle rispettive esecuzioni GitHub Actions e sono soggetti alle impostazioni di conservazione configurate per il repository.
+
+## Note operative
+
+- I workflow sono pensati come supporto alla documentazione del processo di rilascio.
+- I contenuti preimpostati nei PDF devono essere verificati e aggiornati prima dell'uso effettivo in un contesto operativo.
+- La generazione automatica avviene in risposta a una release pubblicata o tramite esecuzione manuale del workflow.
+
+## Integrazione con il processo di rilascio
+
+I PDF generati sono strumenti di supporto alla documentazione del rilascio software e alla raccolta dei controlli di sicurezza. Possono essere usati come base per la verifica interna e la preparazione delle attività di validazione, ma non sostituiscono le procedure aziendali né garantiscono la conformità a standard come ISO 27001.

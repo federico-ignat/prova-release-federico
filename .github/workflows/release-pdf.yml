@@ -158,7 +158,7 @@ jobs:
               ["Titolo Progetto", safe_text(name)],
               ["Repository", safe_text(repo)],
               ["Sviluppatore Assegnato", safe_text(author)],
-              ["Data inizio sviluppo", safe_text(start_date)],
+              ["Data inizio sviluppo", 2026/10/30],
               ["Data di fine", safe_text(release_date[:10] if len(release_date) >= 10 else release_date)],
           ]
 
@@ -178,7 +178,7 @@ jobs:
           story.append(Paragraph("1. Analisi delle specifiche", heading_style))
           data_analisi = [
               ["Data Apertura", "Data Chiusura", "Note"],
-              [safe_text(start_date), safe_text(release_date[:10] if len(release_date) >= 10 else release_date), "Analisi requisiti completata"],
+              [2026/10/30, safe_text(release_date[:10] if len(release_date) >= 10 else release_date), "Analisi requisiti completata"],
           ]
 
           t_analisi = Table(data_analisi, colWidths=[120, 120, 260])
@@ -197,7 +197,7 @@ jobs:
           story.append(Paragraph("2. Sviluppo", heading_style))
           data_sviluppo = [
               ["Data di apertura", "Data di completamento", "Branch"],
-              [safe_text(start_date), safe_text(release_date[:10] if len(release_date) >= 10 else release_date), safe_text(tag)],
+              [2026/10/30, safe_text(release_date[:10] if len(release_date) >= 10 else release_date), safe_text(tag)],
           ]
 
           t_sviluppo = Table(data_sviluppo, colWidths=[120, 120, 260])
@@ -217,7 +217,7 @@ jobs:
           data_test = [
               ["Data di apertura", "Data di completamento", "Bug riscontrati"],
               [
-                  safe_text(start_date),
+                  2026/10/30,
                   safe_text(release_date[:10] if len(release_date) >= 10 else release_date),
                   safe_text(
                       "- L'action non riusciva ad allegare il PDF \n"
@@ -244,7 +244,7 @@ jobs:
           story.append(Paragraph("4. Test affiancamento con ICT Manager", heading_style))
           data_validazione = [
               ["Data di apertura", "Data di completamento", "Esito Test"],
-              [safe_text(start_date), safe_text(validation_date), "Completato con esito positivo"],
+              [2026/10/30, safe_text(validation_date), "Completato con esito positivo"],
           ]
 
           t_validazione = Table(data_validazione, colWidths=[120, 120, 260])
@@ -263,7 +263,7 @@ jobs:
           story.append(Paragraph("5. Validazione per il rilascio", heading_style))
           data_rilascio = [
               ["Data di validazione", "Approvato da", "Note"],
-              [safe_text(validation_date), safe_text(approved_by), safe_text(body[:200] if body else "")],
+              [2026/10/30, safe_text(approved_by), safe_text(body[:200] if body else "")],
           ]
 
           t_rilascio = Table(data_rilascio, colWidths=[120, 120, 260])

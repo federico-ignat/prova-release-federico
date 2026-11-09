@@ -1,59 +1,3 @@
-name: Genera PDF Release Notes per ISO 27001
-
-on:
-  release:
-    types: [published]
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: "Tag della release"
-        required: false
-        default: ""
-      release_name:
-        description: "Nome della release"
-        required: false
-        default: ""
-      body:
-        description: "Testo della release"
-        required: false
-        default: ""
-      start_date:
-        description: "Data di inizio delle attività (YYYY-MM-DD)"
-        required: false
-        default: ""
-      validation_date:
-        description: "Data di validazione (YYYY-MM-DD)"
-        required: false
-        default: ""
-      approved_by:
-        description: "Persona che approva il rilascio"
-        required: false
-        default: ""
-      merge_responsible:
-        description: "Responsabile del merge"
-        required: false
-        default: ""
-
-jobs:
-  build-pdf:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout del codice
-        uses: actions/checkout@v4
-
-      - name: Configura Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-
-      - name: Installa librerie per generare i PDF
-        run: |
-          python -m pip install --disable-pip-version-check reportlab requests
-
       - name: Genera il documento PDF di rilascio
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -96,9 +40,11 @@ jobs:
           body = (os.environ.get("RELEASE_BODY") or "").strip() or "Nessuna nota inserita."
           author = (os.environ.get("AUTHOR") or "Sviluppatore").strip() or "Sviluppatore"
           release_date = (os.environ.get("RELEASE_DATE") or "").strip() or datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-          start_date = os.environ.get("START_DATE", "").strip() or "Da compilare"
+
+          # IMPORTANTE: se non arriva una data, usa una data reale e non "Da compilare"
+          start_date = os.environ.get("START_DATE", "").strip() or release_date[:10] if len(release_date) >= 10 else datetime.utcnow().strftime("%Y-%m-%d")
           validation_date = os.environ.get("VALIDATION_DATE", "").strip() or (
-              release_date[:10] if len(release_date) >= 10 else "Da compilare"
+              release_date[:10] if len(release_date) >= 10 else datetime.utcnow().strftime("%Y-%m-%d")
           )
           approved_by = os.environ.get("APPROVED_BY", "").strip() or "Da compilare"
           merge_responsible = os.environ.get("MERGE_RESPONSIBLE", "").strip() or "Da compilare"
@@ -123,7 +69,6 @@ jobs:
 
           story = []
           styles = getSampleStyleSheet()
-
           title_style = ParagraphStyle(
               "TitleStyle",
               parent=styles["Normal"],
@@ -132,7 +77,6 @@ jobs:
               textColor=colors.HexColor("#1f2937"),
               spaceAfter=12,
           )
-
           heading_style = ParagraphStyle(
               "HeadingStyle",
               parent=styles["Normal"],
@@ -141,7 +85,6 @@ jobs:
               textColor=colors.HexColor("#374151"),
               spaceAfter=6,
           )
-
           body_style = ParagraphStyle(
               "BodyStyle",
               parent=styles["Normal"],
@@ -158,7 +101,7 @@ jobs:
               ["Titolo Progetto", safe_text(name)],
               ["Repository", safe_text(repo)],
               ["Sviluppatore Assegnato", safe_text(author)],
-              ["Data inizio sviluppo", 2026/10/30],
+              ["Data inizio sviluppo", safe_text(start_date)],
               ["Data di fine", safe_text(release_date[:10] if len(release_date) >= 10 else release_date)],
           ]
 
@@ -178,7 +121,7 @@ jobs:
           story.append(Paragraph("1. Analisi delle specifiche", heading_style))
           data_analisi = [
               ["Data Apertura", "Data Chiusura", "Note"],
-              [2026/10/30, safe_text(release_date[:10] if len(release_date) >= 10 else release_date), "Analisi requisiti completata"],
+              [safe_text(start_date), safe_text(release_date[:10] if len(release_date) >= 10 else release_date), "Analisi requisiti completata"],
           ]
 
           t_analisi = Table(data_analisi, colWidths=[120, 120, 260])
@@ -197,7 +140,7 @@ jobs:
           story.append(Paragraph("2. Sviluppo", heading_style))
           data_sviluppo = [
               ["Data di apertura", "Data di completamento", "Branch"],
-              [2026/10/30, safe_text(release_date[:10] if len(release_date) >= 10 else release_date), safe_text(tag)],
+              [safe_text(start_date), safe_text(release_date[:10] if len(release_date) >= 10 else release_date), safe_text(tag)],
           ]
 
           t_sviluppo = Table(data_sviluppo, colWidths=[120, 120, 260])
@@ -217,10 +160,10 @@ jobs:
           data_test = [
               ["Data di apertura", "Data di completamento", "Bug riscontrati"],
               [
-                  2026/10/30,
+                  safe_text(start_date),
                   safe_text(release_date[:10] if len(release_date) >= 10 else release_date),
                   safe_text(
-                      "- L'action non riusciva ad allegare il PDF \n"
+                      "- L'action non riusciva ad allegare il PDF\n"
                       "- Errori di sintassi YAML\n"
                       "- Problemi di impaginazione del PDF"
                   ),
@@ -244,7 +187,7 @@ jobs:
           story.append(Paragraph("4. Test affiancamento con ICT Manager", heading_style))
           data_validazione = [
               ["Data di apertura", "Data di completamento", "Esito Test"],
-              [2026/10/30, safe_text(validation_date), "Completato con esito positivo"],
+              [safe_text(start_date), safe_text(validation_date), "Completato con esito positivo"],
           ]
 
           t_validazione = Table(data_validazione, colWidths=[120, 120, 260])
@@ -263,7 +206,7 @@ jobs:
           story.append(Paragraph("5. Validazione per il rilascio", heading_style))
           data_rilascio = [
               ["Data di validazione", "Approvato da", "Note"],
-              [2026/10/30, safe_text(approved_by), safe_text(body[:200] if body else "")],
+              [safe_text(validation_date), safe_text(approved_by), safe_text(body[:200] if body else "")],
           ]
 
           t_rilascio = Table(data_rilascio, colWidths=[120, 120, 260])
@@ -347,228 +290,3 @@ jobs:
           doc.build(story, onFirstPage=add_page_number, onLaterPages=add_page_number)
           print(f"PDF generato con successo: {pdf_filename}")
           EOF
-
-      - name: Genera il modulo PDF compilabile dei controlli
-        run: |
-          python - <<'PY'
-          from reportlab.lib import colors
-          from reportlab.lib.pagesizes import A4, landscape
-          from reportlab.pdfgen import canvas
-
-          filename = "modulo-verifica-controlli.pdf"
-          page_width, page_height = landscape(A4)
-          pdf = canvas.Canvas(filename, pagesize=landscape(A4))
-          form = pdf.acroForm
-
-          controls = [
-              ("5.1", "Controllo del codice sorgente", "SI", ""),
-              ("5.2", "Gestione del repository", "SI", ""),
-              ("5.3", "Revisione e analisi del codice", "SI", ""),
-              ("5.4", "Gestione delle vulnerabilità", "NO", "Libreria N.Cafe 5.11.0 non applicabile"),
-              ("5.5", "Bootstrapping", "SI", ""),
-              ("5.6", "Gestione parametri di configurazione", "SI", "Gestione tramite file di configurazione"),
-              ("5.7", "Cryptographic Agility", "SI", ""),
-              ("5.8", "Gestione della memoria", "SI", ""),
-              ("5.9", "Type-Safe Practices", "SI", ""),
-              ("5.10", "Locality", "SI", ""),
-              ("5.11", "Gestione degli errori", "SI", "Gestione delle eccezioni implementate"),
-              ("5.12", "Interface Coding (API)", "SI", ""),
-              ("5.13", "Session Management", "NO", "Applicazione stateless, nessuna sessione utente"),
-              ("5.14", "Strumenti di cifratura", "SI", ""),
-              ("5.15", "Input Validation", "SI", "Validazione degli input implementata"),
-              ("5.16", "Output Validation", "SI", "Validazione degli output implementata"),
-          ]
-
-          margin = 30
-          table_width = page_width - 2 * margin
-          column_widths = [42, 205, 95, table_width - 42 - 205 - 95]
-          header_height = 30
-          row_height = 42
-          headings = ["N°", "Controllo", "Implementazione", "Descrizione"]
-          pages = [controls[:8], controls[8:]]
-
-          def draw_page(page_number, page_controls):
-              pdf.setFillColor(colors.black)
-
-              if page_number == 1:
-                  pdf.setFont("Helvetica-Bold", 15)
-                  pdf.drawCentredString(
-                      page_width / 2,
-                      page_height - 34,
-                      "DOCUMENTO DI APPLICABILITÀ DEI CONTROLLI",
-                  )
-                  pdf.setFont("Helvetica", 8)
-                  pdf.drawString(
-                      margin,
-                      page_height - 51,
-                      "Compila o modifica i campi Implementazione e Descrizione direttamente nel PDF.",
-                  )
-                  table_top = page_height - 68
-              else:
-                  table_top = page_height - 28
-
-              table_bottom = table_top - header_height - len(page_controls) * row_height
-              xs = [margin]
-              for width in column_widths:
-                  xs.append(xs[-1] + width)
-
-              pdf.setFillColor(colors.lightgrey)
-              pdf.rect(
-                  margin,
-                  table_top - header_height,
-                  table_width,
-                  header_height,
-                  fill=1,
-                  stroke=0,
-              )
-
-              pdf.setStrokeColor(colors.black)
-              pdf.setLineWidth(0.7)
-
-              for x in xs:
-                  pdf.line(x, table_bottom, x, table_top)
-
-              pdf.line(margin, table_top, page_width - margin, table_top)
-              pdf.line(
-                  margin,
-                  table_top - header_height,
-                  page_width - margin,
-                  table_top - header_height,
-              )
-              pdf.line(margin, table_bottom, page_width - margin, table_bottom)
-
-              pdf.setFillColor(colors.black)
-              pdf.setFont("Helvetica-Bold", 8)
-
-              for index, heading in enumerate(headings):
-                  pdf.drawCentredString(
-                      (xs[index] + xs[index + 1]) / 2,
-                      table_top - header_height / 2 - 3,
-                      heading,
-                  )
-
-              for row_index, (number, title, status, description) in enumerate(page_controls):
-                  row_top = table_top - header_height - row_index * row_height
-                  row_bottom = row_top - row_height
-                  pdf.line(margin, row_bottom, page_width - margin, row_bottom)
-
-                  pdf.setFillColor(colors.black)
-                  pdf.setFont("Helvetica", 8)
-                  pdf.drawCentredString(
-                      (xs[0] + xs[1]) / 2,
-                      row_bottom + row_height / 2 - 3,
-                      number,
-                  )
-
-                  words = title.split()
-                  lines = []
-                  current_line = ""
-                  available_width = column_widths[1] - 12
-
-                  for word in words:
-                      candidate = f"{current_line} {word}".strip()
-                      if pdf.stringWidth(candidate, "Helvetica", 8) <= available_width:
-                          current_line = candidate
-                      else:
-                          if current_line:
-                              lines.append(current_line)
-                          current_line = word
-
-                  if current_line:
-                      lines.append(current_line)
-
-                  line_height = 10
-                  text_y = row_bottom + (row_height + (len(lines) - 1) * line_height) / 2 - 3
-
-                  for line in lines:
-                      pdf.drawString(xs[1] + 6, text_y, line)
-                      text_y -= line_height
-
-                  field_y = row_bottom + 9
-                  field_height = row_height - 18
-
-                  form.textfield(
-                      name=f"implementazione_{number.replace('.', '_')}",
-                      tooltip=f"Implementazione del controllo {number}",
-                      value=status,
-                      x=xs[2] + 5,
-                      y=field_y,
-                      width=column_widths[2] - 10,
-                      height=field_height,
-                      fontName="Helvetica",
-                      fontSize=8,
-                      textColor=colors.black,
-                      borderColor=colors.grey,
-                      fillColor=colors.white,
-                      borderWidth=0.6,
-                      forceBorder=True,
-                  )
-
-                  form.textfield(
-                      name=f"descrizione_{number.replace('.', '_')}",
-                      tooltip=f"Descrizione del controllo {number}",
-                      value=description,
-                      x=xs[3] + 5,
-                      y=field_y,
-                      width=column_widths[3] - 10,
-                      height=field_height,
-                      fontName="Helvetica",
-                      fontSize=8,
-                      textColor=colors.black,
-                      borderColor=colors.grey,
-                      fillColor=colors.white,
-                      borderWidth=0.6,
-                      fieldFlags="multiline",
-                      forceBorder=True,
-                  )
-
-              pdf.setFillColor(colors.black)
-              pdf.setFont("Helvetica", 8)
-              pdf.drawRightString(
-                  page_width - margin,
-                  20,
-                  f"Pagina {page_number} di 2",
-              )
-
-          for page_number, page_controls in enumerate(pages, start=1):
-              draw_page(page_number, page_controls)
-              pdf.showPage()
-
-          pdf.save()
-          print(f"PDF creato: {filename}")
-          PY
-
-      - name: Verifica PDF generati
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          pdfs = sorted(Path(".").glob("Scheda_Rilascio_*.pdf"))
-          pdfs.append(Path("modulo-verifica-controlli.pdf"))
-
-          for pdf in pdfs:
-              if not pdf.is_file() or pdf.stat().st_size == 0:
-                  raise SystemExit(f"PDF mancante o vuoto: {pdf}")
-              if not pdf.read_bytes().startswith(b"%PDF-"):
-                  raise SystemExit(f"Il file {pdf.name} non sembra un PDF valido.")
-              print(f"PDF verificato: {pdf.name} ({pdf.stat().st_size} byte)")
-          PY
-
-      - name: Allega il PDF alla Release esistente
-        if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            Scheda_Rilascio_*.pdf
-            modulo-verifica-controlli.pdf
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Carica PDF come Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: pdf-test
-          path: |
-            Scheda_Rilascio_*.pdf
-            modulo-verifica-controlli.pdf
-          if-no-files-found: error

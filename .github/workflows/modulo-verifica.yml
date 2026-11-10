@@ -73,7 +73,8 @@ jobs:
                   pdf.drawString(
                       margin,
                       page_height - 51,
-                      "Compila o modifica i campi Implementazione e Descrizione direttamente nel PDF.",
+                      "Progetto: GitHub.",
+                      "Responsabile della sicurezza IT: Marco Favagrossa"
                   )
                   table_top = page_height - 68
               else:

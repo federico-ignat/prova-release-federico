@@ -110,7 +110,7 @@ jobs:
               Paragraph("EL.COM", body_style),
               Paragraph("<b>ROADMAP RILASCIO PDF</b>", title_style),
               Paragraph(
-              f"SSI-8.7<br/>Release {tag}<br/>[release_date[:10]]", body_style)
+              f"SSI-8.7<br/>Release {tag}<br/>{release_date[:10]}", body_style)
           ]]
 
           header_table = Table(
@@ -151,7 +151,7 @@ jobs:
  
           data_analisi = [
               ["Data Apertura", "Data Completamento", "Note"],
-              ["2026-10-30", release_date[:10], "Analizzati i requisiti per la generazione automatica della\n documentazione di rilascio tramite GitHub Actions e ReportLab."]
+              ["2026-10-30", release_date[:10], "Analizzati i requisiti per la generazione automatica della\n documentazione di rilascio tramite GitHub Actions e\n ReportLab."]
           ]
  
           t_analisi = Table(data_analisi, colWidths=[120, 120, 260])

@@ -161,7 +161,7 @@ jobs:
           story.append(Paragraph("1. Analisi delle specifiche", heading_style))
           analysis_data = [
               ["Data Apertura", "Data Completamento", "Note"],
-              ["2026-10-30", release_date[:10], "Analisi iniziale dei requisiti per la generazione automatica della documentazione di rilascio tramite GitHub Actions e ReportLab."]
+              ["2026-10-30", release_date[:10], "Analisi iniziale dei requisiti per la generazione automatica\n della documentazione di rilascio tramite GitHub Actions e ReportLab."]
           ]
           analysis_table = Table(analysis_data, colWidths=[120, 120, 260])
           analysis_table.setStyle(TableStyle([
@@ -188,7 +188,7 @@ jobs:
           story.append(Paragraph("3. Test autonomi dello sviluppatore", heading_style))
           test_data = [
               ["Data di apertura", "Data di completamento", "Risultato"],
-              ["2026-10-30", release_date[:10], "Test eseguiti con esito positivo per la generazione PDF e l'allegato alla release."]
+              ["2026-10-30", release_date[:10], "Test eseguiti con esito positivo per la generazione PDF e\n l'allegato alla release."]
           ]
           test_table = Table(test_data, colWidths=[120, 120, 260])
           test_table.setStyle(TableStyle([
@@ -200,7 +200,80 @@ jobs:
           story.append(Spacer(1, 15))
 
           story.append(Paragraph("4. Note della release", heading_style))
-          story.append(Paragraph(release_body.replace("\n", "<br/>"), body_style))
+           test_data = [
+              ["Data di apertura", "Data di completamento", "Esito Test"],
+              ["2026-10-30", release_date[:10], "Test completati con esito positivo. Verificata la corretta\n generazione del PDF, l'allegato automatico alla Release\n GitHub e la corretta archiviazione degli artifact."]
+          ]
+           test_table = Table(test_data, colWidths=[120, 120, 260])
+          test_table.setStyle(TableStyle([
+              ("GRID", (0, 0), (-1, -1), 1, colors.black),
+              ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+              ("VALIGN", (0, 0), (-1, -1), "TOP"),
+
+            ]))
+          story.append(test_table)
+          story.append(Spacer(1, 15))
+
+           story.append(Paragraph("5. Validazione per il rilascio", heading_style))
+           test_data = [
+              ["Data di validazione", "Approvato da", "Note"],
+              ["2026-10-30", Marco Favagrossa, ""],
+          ]
+           test_table = Table(test_data, colWidths=[120, 120, 260])
+          test_table.setStyle(TableStyle([
+              ("GRID", (0, 0), (-1, -1), 1, colors.black),
+              ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+              ("VALIGN", (0, 0), (-1, -1), "TOP"),
+
+            ]))
+          story.append(test_table)
+          story.append(Spacer(1, 15))
+
+           story.append(Paragraph("6. Rilascio in produzione", heading_style))
+           test_data = [
+              ["Data di rilascio", "Responsabile Merge", "Note"],
+              ["2026-10-30", Federico Ignat, ""],
+          ]
+           test_table = Table(test_data, colWidths=[120, 120, 260])
+          test_table.setStyle(TableStyle([
+              ("GRID", (0, 0), (-1, -1), 1, colors.black),
+              ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+              ("VALIGN", (0, 0), (-1, -1), "TOP"),
+
+            ]))
+          story.append(test_table)
+          story.append(Spacer(1, 15))
+
+           story.append(Paragraph("7. Manutenzioni e aggiornamenti", heading_style))
+           test_data = [
+              ["Feedback ricevuti", "Azioni correttive", "Note"],
+              ["Esito positivo", "", ""],
+          ]
+           test_table = Table(test_data, colWidths=[120, 120, 260])
+          test_table.setStyle(TableStyle([
+              ("GRID", (0, 0), (-1, -1), 1, colors.black),
+              ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+              ("VALIGN", (0, 0), (-1, -1), "TOP"),
+
+            ]))
+          story.append(test_table)
+          story.append(Spacer(1, 15))
+
+           story.append(Paragraph("8. Azioni correttive", heading_style))
+           test_data = [
+              ["Descrizione azione", Azioni correttive", "Note"],
+              ["", "", ""]
+          ]
+           test_table = Table(test_data, colWidths=[120, 120, 260])
+          test_table.setStyle(TableStyle([
+              ("GRID", (0, 0), (-1, -1), 1, colors.black),
+              ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+              ("VALIGN", (0, 0), (-1, -1), "TOP"),
+
+            ]))
+          story.append(test_table)
+          story.append(Spacer(1, 15))
+         
 
           doc.build(story, onFirstPage=add_page_number, onLaterPages=add_page_number)
           print(f"PDF generato con successo: {pdf_filename}")

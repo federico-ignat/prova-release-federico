@@ -110,7 +110,7 @@ jobs:
               Paragraph("EL.COM", body_style),
               Paragraph("<b>ROADMAP RILASCIO PDF</b>", title_style),
               Paragraph(
-              f"SSI-8.7<br/>Release {tag}<br/>{release_date[:10]}", body_style)
+              f"Release{tag}<br/>{release_date[:10]}", body_style)
           ]]
 
           header_table = Table(

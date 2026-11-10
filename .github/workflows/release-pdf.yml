@@ -207,7 +207,7 @@ jobs:
  
           data_validazione = [
               ["Data di apertura", "Data di completamento", "Esito Test"],
-              ["2026-10-30", release_date[:10], "Test completati con esito positivo. Verificata la corretta\n generazione del PDF, l'allegato automatico alla Release GitHub e la corretta\n archiviazione degli artifact."]
+              ["2026-10-30", release_date[:10], "Test completati con esito positivo. Verificata la corretta\n generazione del PDF, l'allegato automatico alla Release\n GitHub e la corretta archiviazione degli artifact."]
           ]
  
           t_validazione = Table(

@@ -70,13 +70,9 @@ jobs:
                       "DOCUMENTO DI APPLICABILITÀ DEI CONTROLLI",
                   )
                   pdf.setFont("Helvetica", 8)
-                  pdf.drawString(
-                      margin,
-                      page_height - 51,
-                      "Progetto: GitHub.",
-                      "Responsabile della sicurezza IT: Marco Favagrossa"
-                  )
-                  table_top = page_height - 68
+                  pdf.drawString(margin, page_height - 51, "Progetto: GitHub.")
+                  pdf.drawString(margin, page_height - 62, "Responsabile della sicurezza IT: Marco Favagrossa")
+                  table_top = page_height - 78
               else:
                   table_top = page_height - 28
 
@@ -110,7 +106,6 @@ jobs:
               )
               pdf.line(margin, table_bottom, page_width - margin, table_bottom)
 
-              # Reimposta il colore dopo aver disegnato lo sfondo grigio.
               pdf.setFillColor(colors.black)
               pdf.setFont("Helvetica-Bold", 8)
 
@@ -206,7 +201,8 @@ jobs:
 
           for page_number, page_controls in enumerate(pages, start=1):
               draw_page(page_number, page_controls)
-              pdf.showPage()
+              if page_number < len(pages):
+                  pdf.showPage()
 
           pdf.save()
           print(f"PDF creato: {filename}")

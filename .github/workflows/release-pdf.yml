@@ -115,7 +115,7 @@ jobs:
 
           header_table = Table(
              header_data,
-             colWiths=[90, 300, 110],
+             colWidths=[90, 300, 110],
              rowHeights=[50]
           )
 

@@ -123,6 +123,7 @@ jobs:
              ('GRID', (0,0), (-1,-1), 1, colors.black),
              ('ALIGN', (0,0), (-1,-1), 'CENTER'),
              ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+             ('ALIGN', (1,0). (1,0), 'CENTER').
           ]))
           
           # Intestazione documento per conformità ISO 27001

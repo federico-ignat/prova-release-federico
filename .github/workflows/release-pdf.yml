@@ -364,13 +364,7 @@ jobs:
           story.append(make_table(corrective_actions_data, [120, 120, 260]))
           story.append(Spacer(1, 15))
 
-          story.append(Paragraph("9. Note della release", heading_style))
-          story.append(
-              Paragraph(
-                  escape(release_body).replace("\n", "<br/>"),
-                  body_style,
-              )
-          )
+      
 
           doc.build(
               story,

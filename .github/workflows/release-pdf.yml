@@ -45,6 +45,7 @@ jobs:
           from reportlab.lib import colors
           from reportlab.platypus import Table, TableStyle
           from reportlab.lib import colors
+          
  
           # Recupera le variabili d'ambiente passate da GitHub
           repo = os.environ['REPOSITORY']
@@ -53,6 +54,7 @@ jobs:
           body = os.environ['RELEASE_BODY'] or "Nessuna nota inserita."
           author = os.environ['AUTHOR']
           release_date = os.environ['RELEASE_DATE']
+          
  
           pdf_filename = f"Scheda_Rilascio_{tag}.pdf"
           doc = SimpleDocTemplate(pdf_filename, pagesize=letter,
@@ -102,15 +104,18 @@ jobs:
               spaceAfter=8
           ) 
 
+          
+
           header_data = [[
               Paragraph("EL.COM", body_style),
               Paragraph("<b>ROADMAP RILASCIO PDF</b>", title_style),
-              Paragraph(f"SSI-8.7<br/>Release {tag_name}<br/>{today}", body_style)
+              Paragraph(
+              f"SSI-8.7<br/>Release {tag}<br/>[release_date[:10]]", body_style)
           ]]
 
           header_table = Table(
              header_data,
-             coldWiths=[90, 300, 110],
+             colWiths=[90, 300, 110],
              rowHeights=[50]
           )
 

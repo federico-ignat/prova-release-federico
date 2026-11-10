@@ -45,6 +45,7 @@ jobs:
           from reportlab.lib import colors
           from reportlab.platypus import Table, TableStyle
           from reportlab.lib import colors
+          from reportlab.lib.enums import TA_CENTER
           
  
           # Recupera le variabili d'ambiente passate da GitHub
@@ -88,6 +89,7 @@ jobs:
               fontSize=18,
               textColor=colors.HexColor('#000000'),
               spaceAfter=12
+              alignment=TA_CENTER
           )
           heading_style = ParagraphStyle(
               'HeadingStyle',
@@ -115,8 +117,8 @@ jobs:
 
           header_table = Table(
              header_data,
-             colWidths=[90, 300, 110],
-             rowHeights=[50]
+             colWidths=[80, 360, 80],
+             rowHeights=[60]
           )
 
           header_table.setStyle(TableStyle([

@@ -161,6 +161,7 @@ jobs:
               fontSize=10,
               textColor=colors.black,
               spaceAfter=6,
+              alignment=TA_CENTER
           )
 
           body_style = ParagraphStyle(

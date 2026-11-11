@@ -152,7 +152,8 @@ jobs:
               fontSize=18,
               textColor=colors.black,
               spaceAfter=12,
-              alignment=TA_CENTER,
+              alignment=0,
+              leftIndent=20,
           )
 
           heading_style = ParagraphStyle(

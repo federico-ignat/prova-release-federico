@@ -242,7 +242,7 @@ jobs:
 
           header_table = Table(
               header_data,
-              colWidths=[80, 360, 80],
+              colWidths=[80, 360, 60],
               rowHeights=[60],
           )
           header_table.setStyle(TableStyle([

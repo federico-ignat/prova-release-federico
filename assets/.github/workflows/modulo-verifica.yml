@@ -1,0 +1,198 @@
+name: Genera modulo PDF compilabile dei controlli
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_name:
+        description: Nome del progetto
+        required: false
+        default: GitHub
+      responsible_name:
+        description: Responsabile della sicurezza IT
+        required: false
+        default: Marco Favagrossa
+
+permissions:
+  contents: read
+
+jobs:
+  genera-pdf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Configura Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Installa ReportLab
+        run: python -m pip install --disable-pip-version-check reportlab
+
+      - name: Genera il modulo PDF compilabile
+        env:
+          PROJECT_NAME: ${{ inputs.project_name }}
+          RESPONSIBLE_NAME: ${{ inputs.responsible_name }}
+        run: |
+          python - <<'PY'
+          import os
+          from reportlab.lib import colors
+          from reportlab.lib.pagesizes import A4, landscape
+          from reportlab.pdfgen import canvas
+
+          filename = 'modulo-verifica-controlli.pdf'
+          project_name = os.environ.get('PROJECT_NAME', 'GitHub')
+          responsible_name = os.environ.get('RESPONSIBLE_NAME', 'Marco Favagrossa')
+          page_width, page_height = landscape(A4)
+          pdf = canvas.Canvas(filename, pagesize=landscape(A4))
+          form = pdf.acroForm
+
+          controls = [
+              ('5.1', 'Controllo del codice sorgente', 'SI', ''),
+              ('5.2', 'Gestione del repository', 'SI', ''),
+              ('5.3', 'Revisione e analisi del codice', 'SI', ''),
+              ('5.4', 'Gestione delle vulnerabilità', 'NO', 'Libreria N.Cafe 5.11.0 non applicabile'),
+              ('5.5', 'Bootstrapping', 'SI', ''),
+              ('5.6', 'Gestione parametri di configurazione', 'SI', 'Gestione tramite file di configurazione'),
+              ('5.7', 'Cryptographic Agility', 'SI', ''),
+              ('5.8', 'Gestione della memoria', 'SI', ''),
+              ('5.9', 'Type-Safe Practices', 'SI', ''),
+              ('5.10', 'Locality', 'SI', ''),
+              ('5.11', 'Gestione degli errori', 'SI', 'Gestione delle eccezioni implementate'),
+              ('5.12', 'Interface Coding (API)', 'SI', ''),
+              ('5.13', 'Session Management', 'NO', 'Applicazione stateless, nessuna sessione utente'),
+              ('5.14', 'Strumenti di cifratura', 'SI', ''),
+              ('5.15', 'Input Validation', 'SI', 'Validazione degli input implementata'),
+              ('5.16', 'Output Validation', 'SI', 'Validazione degli output implementata'),
+          ]
+
+          margin = 30
+          table_width = page_width - 2 * margin
+          column_widths = [42, 205, 95, table_width - 42 - 205 - 95]
+          header_height = 30
+          row_height = 42
+          headings = ['N°', 'Controllo', 'Implementazione', 'Descrizione']
+          pages = [controls[:8], controls[8:]]
+
+          def draw_page(page_number, page_controls):
+              pdf.setFillColor(colors.black)
+
+              if page_number == 1:
+                  pdf.setFont('Helvetica-Bold', 15)
+                  pdf.drawCentredString(page_width / 2, page_height - 34, 'DOCUMENTO DI APPLICABILITÀ DEI CONTROLLI')
+                  pdf.setFont('Helvetica', 8)
+                  pdf.drawString(margin, page_height - 51, f'Progetto: {project_name}')
+                  pdf.drawString(margin, page_height - 62, f'Responsabile della sicurezza IT: {responsible_name}')
+                  table_top = page_height - 78
+              else:
+                  table_top = page_height - 28
+
+              table_bottom = table_top - header_height - len(page_controls) * row_height
+              xs = [margin]
+              for width in column_widths:
+                  xs.append(xs[-1] + width)
+
+              pdf.setFillColor(colors.lightgrey)
+              pdf.rect(margin, table_top - header_height, table_width, header_height, fill=1, stroke=0)
+              pdf.setStrokeColor(colors.black)
+              pdf.setLineWidth(0.7)
+
+              for x in xs:
+                  pdf.line(x, table_bottom, x, table_top)
+              pdf.line(margin, table_top, page_width - margin, table_top)
+              pdf.line(margin, table_top - header_height, page_width - margin, table_top - header_height)
+              pdf.line(margin, table_bottom, page_width - margin, table_bottom)
+
+              pdf.setFillColor(colors.black)
+              pdf.setFont('Helvetica-Bold', 8)
+              for index, heading in enumerate(headings):
+                  pdf.drawCentredString((xs[index] + xs[index + 1]) / 2, table_top - header_height / 2 - 3, heading)
+
+              for row_index, (number, title, status, description) in enumerate(page_controls):
+                  row_top = table_top - header_height - row_index * row_height
+                  row_bottom = row_top - row_height
+                  pdf.line(margin, row_bottom, page_width - margin, row_bottom)
+
+                  pdf.setFillColor(colors.black)
+                  pdf.setFont('Helvetica', 8)
+                  pdf.drawCentredString((xs[0] + xs[1]) / 2, row_bottom + row_height / 2 - 3, number)
+
+                  words = title.split()
+                  lines = []
+                  current_line = ''
+                  available_width = column_widths[1] - 12
+                  for word in words:
+                      candidate = f'{current_line} {word}'.strip()
+                      if pdf.stringWidth(candidate, 'Helvetica', 8) <= available_width:
+                          current_line = candidate
+                      else:
+                          if current_line:
+                              lines.append(current_line)
+                          current_line = word
+                  if current_line:
+                      lines.append(current_line)
+
+                  line_height = 10
+                  text_y = row_bottom + (row_height + (len(lines) - 1) * line_height) / 2 - 3
+                  for line in lines:
+                      pdf.drawString(xs[1] + 6, text_y, line)
+                      text_y -= line_height
+
+                  field_y = row_bottom + 9
+                  field_height = row_height - 18
+
+                  form.textfield(
+                      name=f'implementazione_{number.replace(".", "_")}',
+                      tooltip=f'Implementazione del controllo {number}',
+                      value=status,
+                      x=xs[2] + 5,
+                      y=field_y,
+                      width=column_widths[2] - 10,
+                      height=field_height,
+                      fontName='Helvetica',
+                      fontSize=8,
+                      textColor=colors.black,
+                      borderColor=colors.grey,
+                      fillColor=colors.white,
+                      borderWidth=0.6,
+                      forceBorder=True,
+                  )
+
+                  form.textfield(
+                      name=f'descrizione_{number.replace(".", "_")}',
+                      tooltip=f'Descrizione del controllo {number}',
+                      value=description,
+                      x=xs[3] + 5,
+                      y=field_y,
+                      width=column_widths[3] - 10,
+                      height=field_height,
+                      fontName='Helvetica',
+                      fontSize=8,
+                      textColor=colors.black,
+                      borderColor=colors.grey,
+                      fillColor=colors.white,
+                      borderWidth=0.6,
+                      fieldFlags='multiline',
+                      forceBorder=True,
+                  )
+
+              pdf.setFillColor(colors.black)
+              pdf.setFont('Helvetica', 8)
+              pdf.drawRightString(page_width - margin, 20, f'Pagina {page_number} di 2')
+
+          for page_number, page_controls in enumerate(pages, start=1):
+              draw_page(page_number, page_controls)
+              if page_number < len(pages):
+                  pdf.showPage()
+
+          pdf.save()
+          print(f'PDF creato: {filename}')
+          PY
+
+      - name: Carica il PDF come artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: modulo-verifica-controlli
+          path: modulo-verifica-controlli.pdf
+          if-no-files-found: error
+          retention-days: 7

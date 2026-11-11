@@ -200,7 +200,7 @@ jobs:
                   converted,
                   colWidths=col_widths,
                   repeatRows=1 if header else 0,
-                  hAlign="LEFT",
+                  hAlign="CENTER",
               )
 
               commands = [
@@ -244,6 +244,7 @@ jobs:
               header_data,
               colWidths=[80, 360, 60],
               rowHeights=[60],
+              hAlign="CENTER",
           )
           header_table.setStyle(TableStyle([
               ("GRID", (0, 0), (-1, -1), 1, colors.black),

@@ -3,6 +3,10 @@ name: Genera modulo PDF compilabile dei controlli
 on:
   workflow_dispatch:
     inputs:
+      tag_name:
+        description: Tag della release a cui allegare il PDF
+        required: true
+        default: v0.0-test
       project_name:
         description: Nome del progetto
         required: false
@@ -11,9 +15,11 @@ on:
         description: Responsabile della sicurezza IT
         required: false
         default: Marco Favagrossa
+  release:
+    types: [published]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   genera-pdf:
@@ -21,6 +27,26 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Prepara il tag della release
+        id: metadata
+        shell: bash
+        env:
+          EVENT_TAG: ${{ github.event.release.tag_name }}
+          INPUT_TAG: ${{ inputs.tag_name }}
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            tag_name="${EVENT_TAG:-}"
+          else
+            tag_name="${INPUT_TAG:-}"
+          fi
+
+          if [ -z "$tag_name" ]; then
+            echo "::error::Il tag della release è vuoto."
+            exit 1
+          fi
+
+          printf 'tag_name=%s\n' "$tag_name" >> "$GITHUB_OUTPUT"
+
       - name: Configura Python
         uses: actions/setup-python@v5
         with:
@@ -76,7 +102,6 @@ jobs:
 
           def draw_page(page_number, page_controls):
               pdf.setFillColor(colors.black)
-
               if page_number == 1:
                   pdf.setFont('Helvetica-Bold', 15)
                   pdf.drawCentredString(page_width / 2, page_height - 34, 'DOCUMENTO DI APPLICABILITÀ DEI CONTROLLI')
@@ -188,6 +213,14 @@ jobs:
           pdf.save()
           print(f'PDF creato: {filename}')
           PY
+
+      - name: Allega il PDF alla Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.metadata.outputs.tag_name }}
+          files: modulo-verifica-controlli.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Carica il PDF come artifact
         uses: actions/upload-artifact@v4

@@ -107,7 +107,6 @@ jobs:
           from reportlab.lib.enums import TA_CENTER
           from reportlab.lib.pagesizes import letter
           from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-          from reportlab.lib.enums import TA_CENTER, TA_LEFT
           from reportlab.platypus import (
               Paragraph,
               SimpleDocTemplate,
@@ -115,6 +114,7 @@ jobs:
               Table,
               TableStyle,
           )
+          from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
           repo = os.environ["REPOSITORY"]
           tag = os.environ["TAG_NAME"]

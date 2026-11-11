@@ -107,6 +107,7 @@ jobs:
           from reportlab.lib.enums import TA_CENTER
           from reportlab.lib.pagesizes import letter
           from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+          from reportlab.lib.enums import TA_CENTER, TA_LEFT
           from reportlab.platypus import (
               Paragraph,
               SimpleDocTemplate,
@@ -162,7 +163,8 @@ jobs:
               fontSize=10,
               textColor=colors.black,
               spaceAfter=6,
-              alignment=TA_CENTER
+              alignment=TA_CENTER,
+              leftIndent=20,
           )
 
           body_style = ParagraphStyle(

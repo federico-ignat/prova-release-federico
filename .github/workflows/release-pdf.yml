@@ -379,10 +379,9 @@ jobs:
           print(f"PDF generato con successo: {pdf_filename}")
           PY
 
-      - name: Genera Excel
-        run: python create_excel.py
+     
 
-      - name: Upload Excel
+      - name: Allega Excel
         uses: softprops/action-gh-release@v2
         with:
          tag_name: ${{steps.metadata.outputs.tag_name}}

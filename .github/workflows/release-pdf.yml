@@ -385,7 +385,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
          tag_name: ${{steps.metadata.outputs.tag_name}}
-         files: roadmap_rilascio.xlsx.ods
+         files: roadmap_rilascio.xlsx1.ods
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -379,6 +379,14 @@ jobs:
           print(f"PDF generato con successo: {pdf_filename}")
           PY
 
+          - name: Genera Excel
+          run: python create_excel.py
+
+          - name: Upload Excel
+          uses: softprops/action-gh-release@v2
+           with:
+          files: roadmap_rilascio.xlsx
+
       - name: Allega il PDF alla Release esistente
         uses: softprops/action-gh-release@v2
         with:

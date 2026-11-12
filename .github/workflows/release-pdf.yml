@@ -385,7 +385,10 @@ jobs:
       - name: Upload Excel
         uses: softprops/action-gh-release@v2
         with:
-         files: roadmap_rilascio.xlsx
+         tag_name: ${{steps.metadata.outputs.tag_name}}
+         files: assets/roadmap_rilascio.xlsx
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Allega il PDF alla Release esistente
         uses: softprops/action-gh-release@v2

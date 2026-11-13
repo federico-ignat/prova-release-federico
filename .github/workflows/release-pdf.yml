@@ -115,7 +115,6 @@ jobs:
               Table,
               TableStyle,
           )
-          from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
           repo = os.environ["REPOSITORY"]
           tag = os.environ["TAG_NAME"]
@@ -136,6 +135,12 @@ jobs:
               safe_tag = "release"
           pdf_filename = f"Scheda_Rilascio_{safe_tag}.pdf"
 
+          # Nome che vuoi mettere nel titolo del PDF
+          pdf_title = Path.cwd().name
+          # Se vuoi forzare un nome fisso:
+          # pdf_title = "assets"
+          # pdf_title = "release"
+
           doc = SimpleDocTemplate(
               pdf_filename,
               pagesize=letter,
@@ -144,6 +149,11 @@ jobs:
               topMargin=36,
               bottomMargin=36,
           )
+
+          def make_canvas(filename, **kwargs):
+              pdf_canvas = canvas.Canvas(filename, **kwargs)
+              pdf_canvas.setTitle(pdf_title)
+              return pdf_canvas
 
           styles = getSampleStyleSheet()
           story = []
@@ -278,9 +288,7 @@ jobs:
           )
           story.append(Spacer(1, 15))
 
-          story.append(
-              Paragraph("1. Analisi delle specifiche", heading_style)
-          )
+          story.append(Paragraph("1. Analisi delle specifiche", heading_style))
           analysis_data = [
               ["Data Apertura", "Data Completamento", "Note"],
               [
@@ -301,9 +309,7 @@ jobs:
           story.append(make_table(dev_data, [120, 120, 260]))
           story.append(Spacer(1, 15))
 
-          story.append(
-              Paragraph("3. Test autonomi dello sviluppatore", heading_style)
-          )
+          story.append(Paragraph("3. Test autonomi dello sviluppatore", heading_style))
           test_data = [
               ["Data di apertura", "Data di completamento", "Risultato"],
               [
@@ -316,9 +322,7 @@ jobs:
           story.append(make_table(test_data, [120, 120, 260]))
           story.append(Spacer(1, 15))
 
-          story.append(
-              Paragraph("4. Validazione dei test", heading_style)
-          )
+          story.append(Paragraph("4. Validazione dei test", heading_style))
           validation_test_data = [
               ["Data di validazione", "Approvato da", "Esito Test"],
               [
@@ -332,9 +336,7 @@ jobs:
           story.append(make_table(validation_test_data, [120, 120, 260]))
           story.append(Spacer(1, 15))
 
-          story.append(
-              Paragraph("5. Validazione per il rilascio", heading_style)
-          )
+          story.append(Paragraph("5. Validazione per il rilascio", heading_style))
           release_validation_data = [
               ["Data di validazione", "Approvato da", "Note"],
               ["2026-10-30", "Marco Favagrossa", ""],
@@ -342,9 +344,7 @@ jobs:
           story.append(make_table(release_validation_data, [120, 120, 260]))
           story.append(Spacer(1, 15))
 
-          story.append(
-              Paragraph("6. Rilascio in produzione", heading_style)
-          )
+          story.append(Paragraph("6. Rilascio in produzione", heading_style))
           production_data = [
               ["Data di rilascio", "Responsabile Merge", "Note"],
               ["2026-10-30", "Federico Ignat", ""],
@@ -352,9 +352,7 @@ jobs:
           story.append(make_table(production_data, [120, 120, 260]))
           story.append(Spacer(1, 15))
 
-          story.append(
-              Paragraph("7. Manutenzioni e aggiornamenti", heading_style)
-          )
+          story.append(Paragraph("7. Manutenzioni e aggiornamenti", heading_style))
           maintenance_data = [
               ["Feedback ricevuti", "Azioni correttive", "Note"],
               ["Esito positivo", "", ""],
@@ -370,27 +368,21 @@ jobs:
           story.append(make_table(corrective_actions_data, [120, 120, 260]))
           story.append(Spacer(1, 15))
 
-          def make_canvas(filename, **kwargs):
-          pdf_canvas = canvas.Canvas(filename, **kwargs)
-          pdf_canvas.setTitle("release")
-          return pdf_canvas
-
           doc.build(
               story,
               onFirstPage=add_page_number,
               onLaterPages=add_page_number,
               canvasmaker=make_canvas,
           )
+
           print(f"PDF generato con successo: {pdf_filename}")
           PY
-
-     
 
       - name: Allega Excel
         uses: softprops/action-gh-release@v2
         with:
-         tag_name: ${{steps.metadata.outputs.tag_name}}
-         files: roadmap_rilascio.xlsx3.pdf
+          tag_name: ${{ steps.metadata.outputs.tag_name }}
+          files: roadmap_rilascio.xlsx3.pdf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

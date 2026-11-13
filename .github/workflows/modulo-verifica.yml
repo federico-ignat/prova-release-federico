@@ -66,7 +66,7 @@ jobs:
           from reportlab.lib.pagesizes import A4, landscape
           from reportlab.pdfgen import canvas
 
-          folder_name = os.path.basename(os.getcw())
+          folder_name = os.path.basename(os.getcwd())
           filename = 'modulo-verifica-controlli.pdf'
           project_name = os.environ.get('PROJECT_NAME', 'GitHub')
           responsible_name = os.environ.get('RESPONSIBLE_NAME', 'Marco Favagrossa')

@@ -103,6 +103,7 @@ jobs:
           from pathlib import Path
           from xml.sax.saxutils import escape
 
+          from reportlab.pdfgen import canvas
           from reportlab.lib import colors
           from reportlab.lib.enums import TA_CENTER
           from reportlab.lib.pagesizes import letter
@@ -369,12 +370,16 @@ jobs:
           story.append(make_table(corrective_actions_data, [120, 120, 260]))
           story.append(Spacer(1, 15))
 
-      
+          def make_canvas(filename, **kwargs):
+          pdf_canvas = canvas.Canvas(filename, **kwargs)
+          pdf_canvas.setTitle("release")
+          return pdf_canvas
 
           doc.build(
               story,
               onFirstPage=add_page_number,
               onLaterPages=add_page_number,
+              canvasmaker=make_canvas,
           )
           print(f"PDF generato con successo: {pdf_filename}")
           PY

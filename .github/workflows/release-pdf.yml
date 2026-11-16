@@ -135,7 +135,7 @@ jobs:
           pdf_filename = f"Scheda_Rilascio_{safe_tag}.pdf"
 
           # Nome che vuoi mettere nel titolo del PDF
-          pdf_title = f"ROADMAP RILASCIO PDF - {release_name}"
+          pdf_title = "ROADMAP RILASCIO PDF"
           pdf_author = "Federico Ignat"
           # Se vuoi forzare un nome fisso:
           # pdf_title = "assets"
@@ -154,12 +154,9 @@ jobs:
               pdf_canvas = canvas.Canvas(filename, **kwargs)
               pdf_canvas.setTitle(pdf_title)
               pdf_canvas.setAuthor(pdf_author)
-              pdf_canvas.setSubject(f"Release {tag}")
-              pdf_canvas.setCreator("GitHub Actions + ReportLab")
-              pdf_canvas.setProducer("GitHub Actions + ReportLab")
-              
-          return pdf_canvas
-    
+              pdf_canvas.setSubject(pdf_title)
+              return pdf_canvas
+
           styles = getSampleStyleSheet()
           story = []
 

@@ -155,13 +155,13 @@ jobs:
           def __init__(self, *args, **kw):
             super().__init__(*args, **kw)
 
-          def save(self):
-            self.setTitle(pdf_title)
-            self.setAuthor(pdf_author)
-            self.setSubject(f"Release {tag}")
-            self.setCreator("GitHub Actions + ReportLab")
-            self.setProducer("GitHub Actions + ReportLab")
-            super().save()
+            def save(self):
+              self.setTitle(pdf_title)
+              self.setAuthor(pdf_author)
+              self.setSubject(f"Release {tag}")
+              self.setCreator("GitHub Actions + ReportLab")
+              self.setProducer("GitHub Actions + ReportLab")
+              super().save()
 
           return MyCanvas(filename, **kwargs)
 

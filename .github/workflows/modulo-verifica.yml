@@ -72,9 +72,11 @@ jobs:
           responsible_name = os.environ.get('RESPONSIBLE_NAME', 'Marco Favagrossa')
           page_width, page_height = landscape(A4)
           pdf = canvas.Canvas(filename, pagesize=landscape(A4))
+          form = pdf.acroForm
           pdf.setTitle(document_title)
           pdf.setSubject(document_title)
           pdf.setAuthor(responsible_name)
+        
           
           controls = [
               ('5.1', 'Controllo del codice sorgente', 'SI', ''),

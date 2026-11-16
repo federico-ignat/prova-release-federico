@@ -394,7 +394,7 @@ jobs:
           tag_name: ${{ steps.metadata.outputs.tag_name }}
           files: Scheda_Rilascio_*.pdf
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
 
       - name: Carica PDF come Artifact
         uses: actions/upload-artifact@v4

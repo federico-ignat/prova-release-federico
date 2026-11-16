@@ -36,8 +36,8 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Installa librerie PDF
-        run: python -m pip install reportlab pypdf
+      - name: Installa libreria PDF
+        run: python -m pip install reportlab
 
       - name: Prepara i metadati della release
         id: metadata
@@ -114,21 +114,32 @@ jobs:
               Table,
               TableStyle,
           )
-          from pypdf import PdfReader, PdfWriter
 
           repo = os.environ["REPOSITORY"]
           tag = os.environ["TAG_NAME"]
           release_name = os.environ.get("RELEASE_NAME") or tag
           release_date = os.environ.get("RELEASE_DATE") or "N/D"
 
+          body_file = Path(os.environ.get("RELEASE_BODY_FILE", "release_body.txt"))
+          if body_file.exists():
+              release_body = (
+                  body_file.read_text(encoding="utf-8").strip()
+                  or "Nessuna nota inserita."
+              )
+          else:
+              release_body = "Nessuna nota inserita."
+
           safe_tag = re.sub(r"[^A-Za-z0-9._-]+", "-", tag).strip("-.")
           if not safe_tag:
               safe_tag = "release"
           pdf_filename = f"Scheda_Rilascio_{safe_tag}.pdf"
 
-          # Metadati del documento: titolo mostrato dal visualizzatore PDF.
+          # Nome che vuoi mettere nel titolo del PDF
           pdf_title = "ROADMAP RILASCIO PDF"
           pdf_author = "Federico Ignat"
+          # Se vuoi forzare un nome fisso:
+          # pdf_title = "assets"
+          # pdf_title = "release"
 
           doc = SimpleDocTemplate(
               pdf_filename,
@@ -167,6 +178,15 @@ jobs:
               spaceAfter=6,
               alignment=TA_CENTER,
               leftIndent=0,
+          )
+
+          body_style = ParagraphStyle(
+              "Body",
+              parent=styles["Normal"],
+              fontSize=9,
+              leading=12,
+              textColor=colors.HexColor("#374151"),
+              spaceAfter=8,
           )
 
           cell_style = ParagraphStyle(
@@ -210,21 +230,25 @@ jobs:
               ]
 
               if header:
-                  commands.append(("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey))
+                  commands.append(
+                      ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey)
+                  )
 
               if first_column_shaded:
-                  commands.append(("BACKGROUND", (0, 0), (0, -1), colors.lightgrey))
+                  commands.append(
+                      ("BACKGROUND", (0, 0), (0, -1), colors.lightgrey)
+                  )
 
               table.setStyle(TableStyle(commands))
               return table
 
-          def add_page_number(pdf_canvas, document):
-              pdf_canvas.setFont("Helvetica", 8)
-              pdf_canvas.drawString(40, 15, "Avanzamento - Rilascio PDF Software")
-              pdf_canvas.drawRightString(
+          def add_page_number(canvas, document):
+              canvas.setFont("Helvetica", 8)
+              canvas.drawString(40, 15, "Avanzamento - Rilascio PDF Software")
+              canvas.drawRightString(
                   560,
                   15,
-                  f"N° {pdf_canvas.getPageNumber()}",
+                  f"N° {canvas.getPageNumber()}",
               )
 
           header_data = [[
@@ -256,12 +280,14 @@ jobs:
               ["Data inizio sviluppo", "2026-10-30"],
               ["Data di fine", release_date[:10]],
           ]
-          story.append(make_table(
-              project_data,
-              col_widths=[180, 320],
-              header=False,
-              first_column_shaded=True,
-          ))
+          story.append(
+              make_table(
+                  project_data,
+                  col_widths=[180, 320],
+                  header=False,
+                  first_column_shaded=True,
+              )
+          )
           story.append(Spacer(1, 15))
 
           story.append(Paragraph("1. Analisi delle specifiche", heading_style))
@@ -351,41 +377,24 @@ jobs:
               canvasmaker=make_canvas,
           )
 
-          source_pdf = Path(pdf_filename)
-          temp_pdf = source_pdf.with_name(f"{source_pdf.stem}.metadata.tmp.pdf")
-          reader = PdfReader(str(source_pdf))
-          writer = PdfWriter()
-          writer.clone_document_from_reader(reader)
-          writer.add_metadata({
-              "/Title": pdf_title,
-              "/Author": pdf_author,
-              "/Subject": pdf_title,
-              "/Creator": "GitHub Actions - ReportLab",
-          })
-          with temp_pdf.open("wb") as output_file:
-              writer.write(output_file)
-          temp_pdf.replace(source_pdf)
-
-          final_metadata = PdfReader(str(source_pdf)).metadata
-          if final_metadata.title != pdf_title:
-              raise RuntimeError(
-                  f"Titolo PDF errato: {final_metadata.title!r}; atteso {pdf_title!r}"
-              )
-
-          print(f"PDF generato: {pdf_filename}")
-          print(f"Metadati verificati: Title={final_metadata.title!r}, Author={final_metadata.author!r}")
+          print(f"PDF generato con successo: {pdf_filename}")
           PY
 
-          - name: Allega PDF e file Excel alla Release
-          uses: softprops/action-gh-release@v2
-          with:
-            tag_name: ${{ steps.metadata.outputs.tag_name }}
-            files: |
-              Scheda_Rilascio_*.pdf
-              roadmap_rilascio.xlsx3.pdf
-              assets/roadmap_rilascio.xlsx.ods
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Allega Excel
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.metadata.outputs.tag_name }}
+          files: roadmap_rilascio.xlsx3.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Allega il PDF alla Release esistente
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.metadata.outputs.tag_name }}
+          files: Scheda_Rilascio_*.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
 
       - name: Carica PDF come Artifact
         uses: actions/upload-artifact@v4

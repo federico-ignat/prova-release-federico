@@ -150,12 +150,12 @@ jobs:
               bottomMargin=36,
           )
 
-          def make_canvas(filename, **kwargs):
-              pdf_canvas = canvas.Canvas(filename, **kwargs)
-              pdf_canvas.setTitle(pdf_title)
-              pdf_canvas.setAuthor(pdf_author)
-              pdf.canvas.setSubject(pdf_title)
-              return pdf_canvas
+           def make_canvas(filename, **kwargs):
+               pdf_canvas = canvas.Canvas(filename, **kwargs)
+               pdf_canvas.setTitle(pdf_title)
+               pdf_canvas.setAuthor(pdf_author)
+               pdf_canvas.setSubject(pdf_title)
+               return pdf_canvas
 
           styles = getSampleStyleSheet()
           story = []

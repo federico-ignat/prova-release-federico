@@ -102,7 +102,6 @@ jobs:
           import re
           from pathlib import Path
           from xml.sax.saxutils import escape
-
           from reportlab.pdfgen import canvas
           from reportlab.lib import colors
           from reportlab.lib.enums import TA_CENTER
@@ -137,6 +136,7 @@ jobs:
 
           # Nome che vuoi mettere nel titolo del PDF
           pdf_title = "ROADMAP RILASCIO PDF"
+          pdf_author = "Federico Ignat"
           # Se vuoi forzare un nome fisso:
           # pdf_title = "assets"
           # pdf_title = "release"
@@ -153,6 +153,8 @@ jobs:
           def make_canvas(filename, **kwargs):
               pdf_canvas = canvas.Canvas(filename, **kwargs)
               pdf_canvas.setTitle(pdf_title)
+              pdf_canvas.setAuthor(pdf_author)
+              pdf.canvas.setSubject(pdf_title)
               return pdf_canvas
 
           styles = getSampleStyleSheet()

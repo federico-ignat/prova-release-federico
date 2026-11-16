@@ -151,18 +151,13 @@ jobs:
           )
 
           def make_canvas(filename, **kwargs):
-              class MyCanvas(canvas.Canvas):
-                   def __init__(self, *args, **kw):
-                     super().__init__(*args, **kw)
-
-                   def save(self):
-                    self.setTitle(pdf_title)
-                    self.setAuthor(pdf_author)
-                    self.setSubject(f"Release {tag}")
-                    self.setCreator("GitHub Actions + ReportLab")
-                    self.setProducer("GitHub Actions + ReportLab")
-                    super().save()
-
+                pdf_canvas = canvas.Canvas(filename, **kwargs)
+                pdf_canvas.setTitle(pdf_title)
+                pdf_canvas.setAuthor(pdf_author)
+                pdf_canvas.setSubject(f"Release {tag}")
+                pdf_canvas.setCreator("GitHub Actions + ReportLab")
+                pdf_canvas.setProducer("GitHub Actions + ReportLab")
+                return pdf_canvas
           return MyCanvas(filename, **kwargs)
     
           styles = getSampleStyleSheet()

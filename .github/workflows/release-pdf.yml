@@ -401,6 +401,6 @@ jobs:
         with:
           name: pdf-test
           path: Scheda_Rilascio_*.pdf
-                Gestione_cambiamenti.xlsx.ods
+                Gestione_cambiamenti.xlsx
           if-no-files-found: error
           retention-days: 7

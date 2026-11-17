@@ -271,7 +271,7 @@ jobs:
           story.append(Spacer(1, 15))
           story.append(Paragraph("INFORMAZIONI PROGETTO", heading_style))
 
-          info_style = ParagraphStyle("InfoText", parent=style["Normal"], fontSize=8, leading=12, textColor=colors.black, leftIndent=14, spaceAfter=3,")
+          info_style = ParagraphStyle("InfoText", parent=style["Normal"], fontSize=8, leading=12, textColor=colors.black, leftIndent=14, spaceAfter=3")
 
           story.append(Paragraph(f"<b>Titolo Progetto:</b> {release_name}"))
           story.append(Paragraph(f"<b>Repository:</b> {repo}"))

@@ -249,7 +249,7 @@ jobs:
               )
 
           header_data = [[
-              paragraph("EL.COM"),
+              paragraph("<para align='center'><b>EL.COM</b></para>"),
               Paragraph("<para align='center'><b>ROADMAP RILASCIO PDF</b></para>", title_style),
               paragraph(f"{tag}\n{release_date[:10]}"),
           ]]

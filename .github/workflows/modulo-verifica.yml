@@ -65,6 +65,7 @@ jobs:
           from reportlab.lib import colors
           from reportlab.lib.pagesizes import A4, landscape
           from reportlab.pdfgen import canvas
+          from reportlab.platypus import Paragraph
 
           document_title = 'DOCUMENTO CONTROLLI'
           filename = 'modulo-verifica-controlli.pdf'
@@ -111,8 +112,14 @@ jobs:
                   pdf.setFont('Helvetica-Bold', 15)
                   pdf.drawCentredString(page_width / 2, page_height - 34, 'DOCUMENTO APPLICABILITÀ')
                   pdf.setFont('Helvetica', 8)
-                  pdf.drawString(margin, page_height - 51, f'Progetto: Documento Applicabilità Dei Controlli ')
-                  pdf.drawString(margin, page_height - 62, f'Responsabile della sicurezza IT: Marco Favagrossa')
+                  
+                  p_progetto = Paragraph("<b>Progetto:</b> Documento Applicabilità Dei Controlli", style_normale)
+                  p_progetto.wrap(500, 50)
+                  p_progetto.drawOn(pdf, margin, page_height - 51)
+                  p_progetto = Paragraph("<b>Responsabile Ufficio IT:</b> Marco Favagrossa", style_normale)
+                  p_progetto.wrap(500, 50)
+                  p_progetto.drawOn(pdf, margin, page_height - 62)
+                  
                   table_top = page_height - 78
               else:
                   table_top = page_height - 28

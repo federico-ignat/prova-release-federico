@@ -271,15 +271,25 @@ jobs:
           story.append(Spacer(1, 15))
           story.append(Paragraph("INFORMAZIONI PROGETTO", heading_style))
 
-          info_style = ParagraphStyle("InfoText", parent=styles["Normal"], fontSize=8, leading=14, textColor=colors.black, leftIndent=20, spaceAfter=6,)
+          project_info_data = [
+              [Paragraph("<b>Titolo Progetto:</b>", cell_style), Paragraph(release_name, cell_style)],
+              [Paragraph("<b>Repository:</b>", cell_style), Paragraph(repo, cell_style)],
+              [Paragraph("<b>Sviluppatore Assegnato:</b>", cell_style), Paragraph("Federico Ignat", cell_style)],
+              [Paragraph("<b>Data inizio sviluppo:</b>", cell_style), Paragraph("2026-10-30", cell_style)],
+              [Paragraph("<b>Data di fine:</b>", cell_style), Paragraph(release_date[:10], cell_style)],
+          ]
 
-          story.append(Paragraph(f"<b>Titolo Progetto:</b> {release_name}"))
-          story.append(Paragraph(f"<b>Repository:</b> {repo}"))
-          story.append(Paragraph(f"<b>Sviluppatore Assegnato:</b> Federico Ignat"))
-          story.append(Paragraph(f"<b>Data inizio sviluppo:</b> 2026-10-30"))
-          story.append(Paragraph(f"<b>Data di fine:</b> {release_date[:10]}"))
+          info_table = Table(project_info_data, colWidths=[180, 320], hAlign="CENTER")
+          info_table.setStyle(TableStyle([
+              ("VALIGN", (0, 0), (-1, -1), "TOP"),
+              ("TOPPADDING", (0, 0), (-1, -1), 4),    
+              ("BOTTOMPADDING", (0, 0), (-1, -1), 4), 
+              ("LEFTPADDING", (0, 0), (-1, -1), 0),
+              ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+          ]))
 
-          story.append(Spacer(1,15))
+          story.append(info_table)
+          story.append(Spacer(1, 15))
 
           story.append(Paragraph("1. Analisi delle specifiche", heading_style))
           analysis_data = [

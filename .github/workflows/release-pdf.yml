@@ -400,7 +400,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pdf-test
-          path: Scheda_Rilascio_*.pdf
-                Gestione_cambiamenti.xlsx
+          path: |
+            Scheda_Rilascio_*.pdf
+            Gestione_cambiamenti.xlsx
           if-no-files-found: error
           retention-days: 7

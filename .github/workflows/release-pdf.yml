@@ -104,7 +104,7 @@ jobs:
           from xml.sax.saxutils import escape
           from reportlab.pdfgen import canvas
           from reportlab.lib import colors
-          from reportlab.lib.enums import TA_CENTER
+          from reportlab.lib.enums import TA_LEFT, TA_CENTER
           from reportlab.lib.pagesizes import letter
           from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
           from reportlab.platypus import (
@@ -134,12 +134,8 @@ jobs:
               safe_tag = "release"
           pdf_filename = f"Scheda_Rilascio_{safe_tag}.pdf"
 
-          # Nome che vuoi mettere nel titolo del PDF
           pdf_title = "ROADMAP RILASCIO PDF"
           pdf_author = "Federico Ignat"
-          # Se vuoi forzare un nome fisso:
-          # pdf_title = "assets"
-          # pdf_title = "release"
 
           doc = SimpleDocTemplate(
               pdf_filename,
@@ -170,14 +166,15 @@ jobs:
               leftIndent=20,
           )
 
+          # TITOLI SOPRA LE TABELLE: Allineati a sinistra (TA_LEFT) con rientro coordinato
           heading_style = ParagraphStyle(
               "SectionHeading",
               parent=styles["Heading2"],
               fontSize=10,
               textColor=colors.black,
               spaceAfter=6,
-              alignment=TA_CENTER,
-              leftIndent=0,
+              alignment=TA_LEFT,
+              leftIndent=14,
           )
 
           body_style = ParagraphStyle(
@@ -229,15 +226,15 @@ jobs:
                   ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
               ]
 
+              # Se c'è l'intestazione, applica sfondo grigio Ecentra il testo delle celle grigie
               if header:
-                  commands.append(
-                      ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey)
-                  )
+                  commands.append(("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey))
+                  commands.append(("ALIGN", (0, 0), (-1, 0), "CENTER"))
 
+              # Se la prima colonna è ombreggiata, applica sfondo grigio E centralizzane il testo
               if first_column_shaded:
-                  commands.append(
-                      ("BACKGROUND", (0, 0), (0, -1), colors.lightgrey)
-                  )
+                  commands.append(("BACKGROUND", (0, 0), (0, -1), colors.lightgrey))
+                  commands.append(("ALIGN", (0, 0), (0, -1), "CENTER"))
 
               table.setStyle(TableStyle(commands))
               return table
@@ -379,14 +376,6 @@ jobs:
 
           print(f"PDF generato con successo: {pdf_filename}")
           PY
-
-      - name: Allega Excel
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.metadata.outputs.tag_name }}
-          files: roadmap_rilascio.xlsx3.pdf
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Allega il PDF alla Release esistente
         uses: softprops/action-gh-release@v2

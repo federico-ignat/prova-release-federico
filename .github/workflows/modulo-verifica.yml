@@ -111,8 +111,8 @@ jobs:
                   pdf.setFont('Helvetica-Bold', 15)
                   pdf.drawCentredString(page_width / 2, page_height - 34, 'DOCUMENTO APPLICABILITÀ')
                   pdf.setFont('Helvetica', 8)
-                  pdf.drawString(margin, page_height - 51, f'Progetto: {project_name}')
-                  pdf.drawString(margin, page_height - 62, f'Responsabile della sicurezza IT: {responsible_name}')
+                  pdf.drawString(margin, page_height - 51, f'Progetto: Documento Applicabilità Dei Controlli ')
+                  pdf.drawString(margin, page_height - 62, f'Responsabile della sicurezza IT: Marco Favagrossa')
                   table_top = page_height - 78
               else:
                   table_top = page_height - 28

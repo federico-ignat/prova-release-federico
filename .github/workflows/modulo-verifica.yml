@@ -109,7 +109,7 @@ jobs:
               pdf.setFillColor(colors.black)
               if page_number == 1:
                   pdf.setFont('Helvetica-Bold', 15)
-                  pdf.drawCentredString(page_width / 2, page_height - 34, 'DOCUMENTO DI APPLICABILITÀ DEI CONTROLLI')
+                  pdf.drawCentredString(page_width / 2, page_height - 34, 'DOCUMENTO APPLICABILITÀ')
                   pdf.setFont('Helvetica', 8)
                   pdf.drawString(margin, page_height - 51, f'Progetto: {project_name}')
                   pdf.drawString(margin, page_height - 62, f'Responsabile della sicurezza IT: {responsible_name}')

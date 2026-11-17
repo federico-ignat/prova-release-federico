@@ -113,13 +113,13 @@ jobs:
                   pdf.drawCentredString(page_width / 2, page_height - 34, 'DOCUMENTO APPLICABILITÀ CONTROLLI')
                   pdf.setFont('Helvetica', 8)
 
-                  story.append(Spacer(1, 20))
+                  
                   p_progetto = Paragraph("<b>Progetto:</b> Documento Applicabilità Dei Controlli")
                   p_progetto.wrap(500, 50)
-                  p_progetto.drawOn(pdf, margin, page_height - 51)
+                  p_progetto.drawOn(pdf, margin, page_height - 70)
                   p_resp = Paragraph("<b>Responsabile Ufficio IT:</b> Marco Favagrossa")
                   p_resp.wrap(500, 50)
-                  p_resp.drawOn(pdf, margin, page_height - 62)
+                  p_resp.drawOn(pdf, margin, page_height - 92)
                   
                   table_top = page_height - 78
               else:

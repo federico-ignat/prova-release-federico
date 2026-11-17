@@ -134,7 +134,7 @@ jobs:
               safe_tag = "release"
           pdf_filename = f"Scheda_Rilascio_{safe_tag}.pdf"
 
-          pdf_title = "ROADMAP RILASCIO PDF"
+          pdf_title = f"ROADMAP RILASCIO PDF - {tag}"
           pdf_author = "Federico Ignat"
 
           doc = SimpleDocTemplate(

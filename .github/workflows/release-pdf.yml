@@ -137,6 +137,13 @@ jobs:
           pdf_title = f"ROADMAP RILASCIO PDF - {tag}"
           pdf_author = "Federico Ignat"
 
+          def make_canvas(filename, **kwargs):
+              pdf_canvas = canvas.Canvas(filename, **kwargs)
+              pdf_canvas.setTitle(pdf_title)
+              pdf_canvas.setAuthor(pdf_author)
+              pdf_canvas.setSubject(pdf_title)
+              return pdf_canvas
+
           doc = SimpleDocTemplate(
               pdf_filename,
               pagesize=letter,
@@ -144,14 +151,9 @@ jobs:
               leftMargin=36,
               topMargin=36,
               bottomMargin=36,
+              title=pdf_title,
+              author=pdf_author
           )
-
-          def make_canvas(filename, **kwargs):
-              pdf_canvas = canvas.Canvas(filename, **kwargs)
-              pdf_canvas.setTitle(pdf_title)
-              pdf_canvas.setAuthor(pdf_author)
-              pdf_canvas.setSubject(pdf_title)
-              return pdf_canvas
 
           styles = getSampleStyleSheet()
           story = []

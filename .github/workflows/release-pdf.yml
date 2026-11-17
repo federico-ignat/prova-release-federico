@@ -271,22 +271,15 @@ jobs:
           story.append(Spacer(1, 15))
           story.append(Paragraph("INFORMAZIONI PROGETTO", heading_style))
 
-          project_data = [
-              ["Titolo Progetto", release_name],
-              ["Repository", repo],
-              ["Sviluppatore Assegnato", "Federico Ignat"],
-              ["Data inizio sviluppo", "2026-10-30"],
-              ["Data di fine", release_date[:10]],
-          ]
-          story.append(
-              make_table(
-                  project_data,
-                  col_widths=[180, 320],
-                  header=False,
-                  first_column_shaded=True,
-              )
-          )
-          story.append(Spacer(1, 15))
+          info_style = ParagraphStyle("InfoText, parent=style["Normal"], fontSize=8, leading=12, textColor=colors.black, leftIndent=14, spaceAfter=3,")
+
+          story.append(Paragraph(f"<b>Titolo Progetto:</b> {release_name}"))
+          story.append(Paragraph(f"<b>Repository:</b> {repo}"))
+          story.append(Paragraph(f"<b>Sviluppatore Assegnato:</b> Federico Ignat"))
+          story.append(Paragraph(f"<b>Data inizio sviluppo:</b> 2026-10-30"))
+          story.append(Paragraph(f"<b>Data di fine:</b> {release_date[:10]}"))
+
+          story.append(Spacer(1,15))
 
           story.append(Paragraph("1. Analisi delle specifiche", heading_style))
           analysis_data = [

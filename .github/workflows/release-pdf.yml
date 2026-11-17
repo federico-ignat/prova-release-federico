@@ -162,11 +162,10 @@ jobs:
           title_style = ParagraphStyle(
               "ReleaseTitle",
               parent=styles["Heading1"],
-              fontSize=18,
+              fontSize=16,
               textColor=colors.black,
-              spaceAfter=12,
-              alignment=0,
-              leftIndent=20,
+              spaceAfter=0,
+              alignement=TA_CENTER,
           )
 
           # Titoli sopra le tabelle: allineati a sinistra
@@ -251,7 +250,7 @@ jobs:
 
           header_data = [[
               paragraph("EL.COM"),
-              Paragraph("<b>ROADMAP RILASCIO PDF</b>", title_style),
+              Paragraph("ROADMAP RILASCIO PDF", title_style),
               paragraph(f"{tag}\n{release_date[:10]}"),
           ]]
 

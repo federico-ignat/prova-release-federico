@@ -271,11 +271,11 @@ jobs:
           story.append(Paragraph("INFORMAZIONI PROGETTO", heading_style))
 
           project_data = [
-              ["Titolo Progetto", release_name],
-              ["Repository", repo],
-              ["Sviluppatore Assegnato", "Federico Ignat"],
-              ["Data inizio sviluppo", "2026-10-30"],
-              ["Data di fine", release_date[:10]],
+              ["<b>Titolo Progetto</b>", release_name],
+              ["<b>Repository</b>", repo],
+              ["<b>Sviluppatore Assegnato</b>", "Federico Ignat"],
+              ["<b>Data inizio sviluppo</b>", "2026-10-30"],
+              ["<b>Data di fine</b>", release_date[:10]],
           ]
           story.append(
               make_table(

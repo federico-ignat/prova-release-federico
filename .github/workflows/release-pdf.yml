@@ -402,7 +402,6 @@ jobs:
           name: pdf-test
           path: |
             Scheda_Rilascio_*.pdf
-            modulo-verifica-controlli.pdf
             Gestione_cambiamenti.xlsx.ods
             
           if-no-files-found: error

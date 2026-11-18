@@ -34,6 +34,12 @@ Il workflow **"Genera modulo PDF compilabile dei controlli"** crea un modulo PDF
 
 **Generazione manuale:** aprire **Actions**, selezionare il workflow e avviare **Run workflow**. Il file sarà disponibile come artifact con nome **"modulo-verifica-controlli"**.
 
+### Analisi del cambiamento
+
+Il workflow **"Genera e Allega Analisi Cambiamento"** genera il documento **`Analisi_Cambiamento.pdf`**, che traccia in modo formale le modifiche apportate alla codebase e la relativa valutazione d'impatto sulla sicurezza per la release corrente.
+
+**Generazione automatica e manuale:** viene creato e allegato automaticamente alla release (o avviato manualmente tramite `workflow_dispatch`).
+
 ## Sezioni della scheda di rilascio
 
 La scheda include:
@@ -57,14 +63,15 @@ Alcuni valori e testi della scheda sono preimpostati nel workflow; per modificar
 
 ## File principali
 
-- `.github/workflows/release-pdf.yml` — generazione e pubblicazione della scheda di rilascio e del modulo dei controlli.
+- `.github/workflows/release-pdf.yml` — generazione e pubblicazione della scheda di rilascio.
 - `.github/workflows/modulo-verifica.yml` — generazione autonoma del modulo compilabile dei controlli.
+- `.github/workflows/analisi-cambiamento.yml` — generazione e pubblicazione del documento di analisi del cambiamento.
 
 ## Recupero dei PDF
 
 - **PDF della release:** aprire la release GitHub per trovare i file allegati; in alternativa, consultare gli artifact dell'esecuzione in **Actions**.
 - **Modulo dei controlli:** consultare gli artifact dell'esecuzione del workflow **"Genera modulo PDF compilabile dei controlli"**.
-- **PDF della release e modulo dei controlli generati dal workflow di rilascio:** controllare gli artifact dell'esecuzione del workflow **"Genera PDF Release Notes per ISO 27001"**.
+- **Analisi del cambiamento:** disponibile tra gli allegati della release o tra gli artifact del rispettivo workflow.
 
 Gli artifact sono associati alle rispettive esecuzioni GitHub Actions e sono soggetti alle impostazioni di conservazione configurate per il repository.
 

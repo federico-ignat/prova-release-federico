@@ -65,7 +65,7 @@ Alcuni valori e testi della scheda sono preimpostati nel workflow; per modificar
 
 - `.github/workflows/release-pdf.yml` — generazione e pubblicazione della scheda di rilascio.
 - `.github/workflows/modulo-verifica.yml` — generazione autonoma del modulo compilabile dei controlli.
-- `.github/workflows/analisi-cambiamento.yml` — generazione e pubblicazione del documento di analisi del cambiamento.
+- `.github/workflows/Gestione_cambiamenti.xlsx.ods` — generazione e pubblicazione del documento di analisi del cambiamento.
 
 ## Recupero dei PDF
 
